@@ -13,8 +13,12 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
+  private boolean robotWorks;
+
   public Robot() {
     m_robotContainer = new RobotContainer();
+    robotWorks = true;
+    System.out.println("Robot Works = " + robotWorks);
   }
 
   @Override
