@@ -1,0 +1,14 @@
+@startuml
+participant driveCtrl
+participant AButton
+participant motorON
+participant shoot
+
+
+
+driveCtrl -> AButton:
+AButton -> motorON:
+motorON -> shoot:
+
+
+@endumlg

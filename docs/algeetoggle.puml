@@ -1,0 +1,14 @@
+@startuml
+participant driveCtrl
+participant Xbutton
+participant motorON
+participant algeeChange
+
+
+
+driveCtrl -> Xbutton:
+Xbutton -> motorON:
+motorON -> algeeChange:
+
+
+@enduml

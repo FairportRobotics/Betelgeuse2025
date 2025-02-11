@@ -1,0 +1,13 @@
+@startuml
+participant driveCtrl
+participant DpadDownButton
+participant motorON
+participant elevatorDown
+
+
+
+driveCtrl -> DpadDownButton:
+DpadDownButton -> motorON:
+motorON -> elevatorDown:
+
+@enduml

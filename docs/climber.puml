@@ -1,0 +1,14 @@
+@startuml
+participant driveCtrl
+participant Bbutton
+participant motorON
+participant climberToggle
+
+
+
+driveCtrl -> Bbutton:
+Bbutton -> motorON:
+motorON -> climberToggle:
+
+
+@enduml

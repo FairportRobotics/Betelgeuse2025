@@ -16,9 +16,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.commands.ElevatorLevelCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -37,6 +38,9 @@ public class RobotContainer {
     private final CommandXboxController operator = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    //Subsytem storage
+    private final ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
 
     public RobotContainer() {
         configureBindings();
@@ -68,6 +72,10 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.options().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        // Sets the pov up and down of operator's controller to increase or decrease the level of the arm elevator.
+        operator.povUp().onTrue(new ElevatorLevelCommand(elevatorSubsystem, true));
+        operator.povDown().onTrue(new ElevatorLevelCommand(elevatorSubsystem, false));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
