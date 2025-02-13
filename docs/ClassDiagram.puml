@@ -1,0 +1,291 @@
+@startuml
+skinparam classAttributeIconSize 0
+class RobotContainer{
+- MaxSpeed : double
+- MaxAngularRate : double
+- drive : SwerveRequest.FieldCentric
+- brake : SwerveRequest.SwerveDriveBrake
+- point : SwerveRequest.PointWheelsAt
+- logger : Telemetry
+- driver : CommandPS4Controller
+- operator : CommandXboxController
++ drivetrain : CommandSwerveDrivetrain
+- elevatorSubsystem : ElevatorSubsystem
++ RobotContainer()
+- configureBindings() : void
++ getAutonomousCommand() : Command
+}
+class SetArmPosCommand{
+- m_subsystem : ArmSubsystem
+- pos : ArmPositions
++ SetArmPosCommand(subsystem : ArmSubsystem, newPos : ArmPositions)
++ initialize() : void
++ execute() : void
++ end(interrupted : boolean) : void
++ isFinished() : boolean
+}
+SetArmPosCommand --|> Command
+class TunerConstants{
+- {static} steerGains : Slot0Configs
+- {static} driveGains : Slot0Configs
+- {static} kSteerClosedLoopOutput : ClosedLoopOutputType
+- {static} kDriveClosedLoopOutput : ClosedLoopOutputType
+- {static} kDriveMotorType : DriveMotorArrangement
+- {static} kSteerMotorType : SteerMotorArrangement
+- {static} kSteerFeedbackType : SteerFeedbackType
+- {static} kSlipCurrent : Current
+- {static} driveInitialConfigs : TalonFXConfiguration
+- {static} steerInitialConfigs : TalonFXConfiguration
+- {static} encoderInitialConfigs : CANcoderConfiguration
+- {static} pigeonConfigs : Pigeon2Configuration
++ {static} kCANBus : CANBus
++ {static} kSpeedAt12Volts : LinearVelocity
+- {static} kCoupleRatio : double
+- {static} kDriveGearRatio : double
+- {static} kSteerGearRatio : double
+- {static} kWheelRadius : Distance
+- {static} kInvertLeftSide : boolean
+- {static} kInvertRightSide : boolean
+- {static} kPigeonId : int
+- {static} kSteerInertia : MomentOfInertia
+- {static} kDriveInertia : MomentOfInertia
+- {static} kSteerFrictionVoltage : Voltage
+- {static} kDriveFrictionVoltage : Voltage
++ {static} DrivetrainConstants : SwerveDrivetrainConstants
+- {static} ConstantCreator : SwerveModuleConstantsFactory<TalonFXConfiguration,TalonFXConfiguration,CANcoderConfiguration>
+- {static} kFrontLeftDriveMotorId : int
+- {static} kFrontLeftSteerMotorId : int
+- {static} kFrontLeftEncoderId : int
+- {static} kFrontLeftEncoderOffset : Angle
+- {static} kFrontLeftSteerMotorInverted : boolean
+- {static} kFrontLeftEncoderInverted : boolean
+- {static} kFrontLeftXPos : Distance
+- {static} kFrontLeftYPos : Distance
+- {static} kFrontRightDriveMotorId : int
+- {static} kFrontRightSteerMotorId : int
+- {static} kFrontRightEncoderId : int
+- {static} kFrontRightEncoderOffset : Angle
+- {static} kFrontRightSteerMotorInverted : boolean
+- {static} kFrontRightEncoderInverted : boolean
+- {static} kFrontRightXPos : Distance
+- {static} kFrontRightYPos : Distance
+- {static} kBackLeftDriveMotorId : int
+- {static} kBackLeftSteerMotorId : int
+- {static} kBackLeftEncoderId : int
+- {static} kBackLeftEncoderOffset : Angle
+- {static} kBackLeftSteerMotorInverted : boolean
+- {static} kBackLeftEncoderInverted : boolean
+- {static} kBackLeftXPos : Distance
+- {static} kBackLeftYPos : Distance
+- {static} kBackRightDriveMotorId : int
+- {static} kBackRightSteerMotorId : int
+- {static} kBackRightEncoderId : int
+- {static} kBackRightEncoderOffset : Angle
+- {static} kBackRightSteerMotorInverted : boolean
+- {static} kBackRightEncoderInverted : boolean
+- {static} kBackRightXPos : Distance
+- {static} kBackRightYPos : Distance
++ {static} FrontLeft : SwerveModuleConstants<TalonFXConfiguration,TalonFXConfiguration,CANcoderConfiguration>
++ {static} FrontRight : SwerveModuleConstants<TalonFXConfiguration,TalonFXConfiguration,CANcoderConfiguration>
++ {static} BackLeft : SwerveModuleConstants<TalonFXConfiguration,TalonFXConfiguration,CANcoderConfiguration>
++ {static} BackRight : SwerveModuleConstants<TalonFXConfiguration,TalonFXConfiguration,CANcoderConfiguration>
++ {static} createDrivetrain() : CommandSwerveDrivetrain
+}
+class Main{
+- Main()
++ {static} main(args : String) : void
+}
+class ExampleCommand{
+- m_subsystem : ExampleSubsystem
++ ExampleCommand(subsystem : ExampleSubsystem)
++ initialize() : void
++ execute() : void
++ end(interrupted : boolean) : void
++ isFinished() : boolean
+}
+ExampleCommand --|> Command
+class OperatorConstants{
++ {static} kDriverControllerPort : int
+}
+class ArmSubsystem{
++ armYMotor : SparkMax
++ limitSwitch : DigitalInput
++ absPos : double
++ pos : ArmPositions
++ m_controller : SparkClosedLoopController
++ ArmSubsystem()
++ exampleMethodCommand() : Command
++ periodic() : void
++ getPos() : ArmPositions
++ setPos(newPos : ArmPositions) : void
++ simulationPeriodic() : void
+}
+ArmSubsystem --|> SubsystemBase
+class ExampleSubsystem{
++ ExampleSubsystem()
++ exampleMethodCommand() : Command
++ exampleCondition() : boolean
++ periodic() : void
++ simulationPeriodic() : void
+}
+ExampleSubsystem --|> SubsystemBase
+class Telemetry{
+- MaxSpeed : double
+- inst : NetworkTableInstance
+- driveStateTable : NetworkTable
+- drivePose : StructPublisher<Pose2d>
+- driveSpeeds : StructPublisher<ChassisSpeeds>
+- driveModuleStates : StructArrayPublisher<SwerveModuleState>
+- driveModuleTargets : StructArrayPublisher<SwerveModuleState>
+- driveModulePositions : StructArrayPublisher<SwerveModulePosition>
+- driveTimestamp : DoublePublisher
+- driveOdometryFrequency : DoublePublisher
+- table : NetworkTable
+- fieldPub : DoubleArrayPublisher
+- fieldTypePub : StringPublisher
+- m_moduleMechanisms : Mechanism2d[]
+- m_moduleSpeeds : MechanismLigament2d[]
+- m_moduleDirections : MechanismLigament2d[]
+- m_poseArray : double[]
+- m_moduleStatesArray : double[]
+- m_moduleTargetsArray : double[]
++ Telemetry(maxSpeed : double)
++ telemeterize(state : SwerveDriveState) : void
+}
+class CommandSwerveDrivetrain{
+- {static} kSimLoopPeriod : double
+- m_simNotifier : Notifier
+- m_lastSimTime : double
+- {static} kBlueAlliancePerspectiveRotation : Rotation2d
+- {static} kRedAlliancePerspectiveRotation : Rotation2d
+- m_hasAppliedOperatorPerspective : boolean
+- m_translationCharacterization : SwerveRequest.SysIdSwerveTranslation
+- m_steerCharacterization : SwerveRequest.SysIdSwerveSteerGains
+- m_rotationCharacterization : SwerveRequest.SysIdSwerveRotation
+- m_sysIdRoutineTranslation : SysIdRoutine
+- m_sysIdRoutineSteer : SysIdRoutine
+- m_sysIdRoutineRotation : SysIdRoutine
+- m_sysIdRoutineToApply : SysIdRoutine
++ CommandSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, modules : SwerveModuleConstants<?,?,?>)
++ CommandSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, odometryUpdateFrequency : double, modules : SwerveModuleConstants<?,?,?>)
++ CommandSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, odometryUpdateFrequency : double, odometryStandardDeviation : Matrix<N3,N1>, visionStandardDeviation : Matrix<N3,N1>, modules : SwerveModuleConstants<?,?,?>)
++ applyRequest(requestSupplier : Supplier<SwerveRequest>) : Command
++ sysIdQuasistatic(direction : SysIdRoutine.Direction) : Command
++ sysIdDynamic(direction : SysIdRoutine.Direction) : Command
++ periodic() : void
+- startSimThread() : void
++ addVisionMeasurement(visionRobotPoseMeters : Pose2d, timestampSeconds : double) : void
++ addVisionMeasurement(visionRobotPoseMeters : Pose2d, timestampSeconds : double, visionMeasurementStdDevs : Matrix<N3,N1>) : void
+}
+CommandSwerveDrivetrain ..|> Subsystem
+CommandSwerveDrivetrain --|> TunerSwerveDrivetrain
+class Constants{
+}
+class ArmConstants{
++ {static} MotorYID : int
++ {static} LimitID : int
+}
+class ArmDownCommand{
+- m_subsystem : ArmSubsystem
+- pos : ArmPositions
++ ArmDownCommand(subsystem : ArmSubsystem)
++ initialize() : void
++ execute() : void
++ end(interrupted : boolean) : void
++ isFinished() : boolean
+}
+ArmDownCommand --|> Command
+class Robot{
+- m_autonomousCommand : Command
+- m_robotContainer : RobotContainer
++ Robot()
++ robotPeriodic() : void
++ disabledInit() : void
++ disabledPeriodic() : void
++ disabledExit() : void
++ autonomousInit() : void
++ autonomousPeriodic() : void
++ autonomousExit() : void
++ teleopInit() : void
++ teleopPeriodic() : void
++ teleopExit() : void
++ testInit() : void
++ testPeriodic() : void
++ testExit() : void
++ simulationPeriodic() : void
+}
+Robot --|> TimedRobot
+class ArmUpCommand{
+- m_subsystem : ArmSubsystem
+- pos : ArmPositions
++ ArmUpCommand(subsystem : ArmSubsystem)
++ initialize() : void
++ execute() : void
++ end(interrupted : boolean) : void
++ isFinished() : boolean
+}
+ArmUpCommand --|> Command
+class ElevatorLevelCommand{
+- elevatorSubsystem : ElevatorSubsystem
+- increaseLevel : boolean
++ ElevatorLevelCommand(elevatorSubsystem : ElevatorSubsystem, increaseLevel : boolean)
++ execute() : void
++ isFinished() : boolean
+}
+ElevatorLevelCommand --|> Command
+class TunerSwerveDrivetrain{
++ TunerSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, modules : SwerveModuleConstants<?,?,?>)
++ TunerSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, odometryUpdateFrequency : double, modules : SwerveModuleConstants<?,?,?>)
++ TunerSwerveDrivetrain(drivetrainConstants : SwerveDrivetrainConstants, odometryUpdateFrequency : double, odometryStandardDeviation : Matrix<N3,N1>, visionStandardDeviation : Matrix<N3,N1>, modules : SwerveModuleConstants<?,?,?>)
+}
+TunerSwerveDrivetrain --|> SwerveDrivetrain
+class LightingSubsystem{
++ {static} _CANdle : CANdle
+currentColor : String
++ LightingSubsystem()
++ setColor(red : int, green : int, blue : int, brightness : double) : void
++ fire() : void
++ rainbow() : void
++ larson() : void
++ cachow() : void
++ setClimbColor() : void
+}
+LightingSubsystem --|> SubsystemBase
+class Autos{
+- Autos()
++ {static} exampleAuto(subsystem : ExampleSubsystem) : Command
+}
+class ElevatorSubsystem{
++ ElevatorSubsystem()
++ changeLevel(increaseElevator : boolean) : boolean
+}
+ElevatorSubsystem --|> SubsystemBase
+class AdvantageKitConstants{
++ {static} CURRENT_MODE : RobotType
+}
+RobotContainer--"- logger" Telemetry
+RobotContainer--"+ drivetrain" CommandSwerveDrivetrain
+RobotContainer--"- elevatorSubsystem" ElevatorSubsystem
+SetArmPosCommand--"- m_subsystem" ArmSubsystem
+SetArmPosCommand--"- pos" ArmPositions
+ExampleCommand--"- m_subsystem" ExampleSubsystem
+ArmSubsystem--"+ pos" ArmPositions
+ArmDownCommand--"- m_subsystem" ArmSubsystem
+ArmDownCommand--"- pos" ArmPositions
+Robot--"- m_robotContainer" RobotContainer
+ArmUpCommand--"- m_subsystem" ArmSubsystem
+ArmUpCommand--"- pos" ArmPositions
+ElevatorLevelCommand--"- elevatorSubsystem" ElevatorSubsystem
+AdvantageKitConstants--"+ {static} CURRENT_MODE" RobotType
+enum RobotType{
+SIM
+REAL
+REPLAY
+}
+enum ArmPositions{
+UP
+MIDDLE
+DOWN
+NONE
+}
+@enduml
