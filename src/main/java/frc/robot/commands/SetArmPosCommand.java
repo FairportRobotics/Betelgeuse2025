@@ -9,8 +9,12 @@ import frc.robot.Constants.ArmConstants.ArmPositions;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.revrobotics.spark.SparkBase.ControlType;
 
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
@@ -19,6 +23,11 @@ public class SetArmPosCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ArmSubsystem m_subsystem;
   private ArmPositions pos;
+  private StatusSignal<Angle> currentPos;
+
+  private StatusSignal<Double> posError;
+
+  final PositionVoltage posRequest;
   /**
    * Creates a new SetArmPosCommand.
    * This command sets the arm positon to the passed in position.
@@ -29,7 +38,9 @@ public class SetArmPosCommand extends Command {
   public SetArmPosCommand(ArmSubsystem subsystem, ArmPositions newPos) {
     m_subsystem = subsystem;
     pos = newPos;
+    posError = m_subsystem.armYMotor.getClosedLoopError();
 
+    posRequest = new PositionVoltage(0).withSlot(0);
 
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -39,7 +50,7 @@ public class SetArmPosCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.setPos(pos);
+    m_subsystem.setPos(pos,posRequest);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,9 +64,18 @@ public class SetArmPosCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (m_subsystem.armYMotor.getEncoder().getPosition() == pos.getValue()) {
-      return true;
-    }
-    return false;
+    posError.refresh();
+
+        if (pos == ArmPositions.UP) {
+            return !m_subsystem.limitSwitch.get();
+        } 
+        else if (currentPos.hasUpdated()) {
+
+            SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
+
+            return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
+        }
+
+        return false;
   }
 }

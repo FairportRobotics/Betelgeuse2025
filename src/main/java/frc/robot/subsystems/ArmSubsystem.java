@@ -9,6 +9,10 @@ import java.security.DigestInputStream;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.spark.SparkBase.ControlType;
@@ -26,18 +30,27 @@ import frc.robot.Constants.ArmConstants.ArmPositions;
 
 public class ArmSubsystem extends SubsystemBase {
 
-  
-  public SparkMax armYMotor; 
-  public DigitalInput limitSwitch; 
-  public double absPos;
-  public ArmPositions pos; 
-  public SparkClosedLoopController m_controller; 
+  public TalonFX armYMotor;
+  public DigitalInput limitSwitch;
+  public StatusSignal absPos;
+  public ArmPositions pos;
+  final VelocityVoltage m_velocity = new VelocityVoltage(0);
+
   /** Creates a new ExampleSubsystem. */
   public ArmSubsystem() {
-    armYMotor = new SparkMax( Constants.ArmConstants.MotorYID , MotorType.kBrushless);
+    armYMotor = new TalonFX(4);
     limitSwitch = new DigitalInput(Constants.ArmConstants.LimitID);
-    pos = ArmPositions.NONE;
-    m_controller = armYMotor.getClosedLoopController();
+    pos = ArmPositions.DOWN;
+
+    TalonFXConfiguration armYConfig = new TalonFXConfiguration();
+        armYConfig.Slot0.kP = 0.8;
+        armYConfig.Slot0.kI = 0.5;
+        armYConfig.Slot0.kD = 0.3;
+        armYMotor.getConfigurator().apply(armYConfig);
+        absPos = armYMotor.getPosition();
+        absPos.setUpdateFrequency(50);
+        armYMotor.optimizeBusUtilization();
+    armYMotor.getConfigurator().apply(armYConfig, 0.050);
   }
 
   /**
@@ -57,45 +70,53 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(pos == ArmPositions.NONE){
-            
-            this.armYMotor.set(0.1);
-            if (!this.limitSwitch.get()) {
-                this.armYMotor.set(0.0);
-                pos = ArmPositions.UP;
-                armYMotor.getEncoder().setPosition(0);
-                absPos = armYMotor.getEncoder().getPosition();
-            }
-      }
-      Logger.recordOutput("Arm at Home ", !limitSwitch.get());
-      Logger.recordOutput("Arm Position: ", armYMotor.getEncoder().getPosition());
+    /*if (pos == ArmPositions.NONE) {
 
+      this.armYMotor.set(0.1);
+      if (!this.limitSwitch.get()) {
+        this.armYMotor.set(0.0);
+        pos = ArmPositions.UP;
+        armYMotor.setPosition(0);
+        absPos = armYMotor.getPosition();
+      }
+    }
+    Logger.recordOutput("Arm at Home ", !limitSwitch.get());
+    */
   }
+
   /**
    * Get the value of the curent set position for the arm.
    *
-   * @return an ArmPositions object that is curently set in the Subsystem. So you can know what position the arm is curently set to. It's kinda usefull.
+   * @return an ArmPositions object that is curently set in the Subsystem. So you
+   *         can know what position the arm is curently set to. It's kinda
+   *         usefull.
    */
-  public ArmPositions getPos(){
+  public ArmPositions getPos() {
     return pos;
   }
 
   /**
    * Set the value of the arm position.
    *
-   *@param newPos New ArmPositions object to go to. This is important for keeping track of where the arm is. Maybe.
+   * @param newPos New ArmPositions object to go to. This is important for keeping
+   *               track of where the arm is. Maybe.
    */
-  public void setPos(ArmPositions newPos){
-    m_controller.setReference(newPos.getValue(), ControlType.kPosition);
-    pos = newPos;
+  public void setPos(ArmPositions newPos, PositionVoltage PosRequest) {
+    armYMotor.setNeutralMode(NeutralModeValue.Coast);
+
+    absPos = armYMotor.getPosition();
+    PosRequest = new PositionVoltage(0).withSlot(0);
+    armYMotor.setControl(PosRequest.withPosition(pos.getValue()));
   }
 
-
+  public void stopMotor(){
+    armYMotor.stopMotor();
+  }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
 
   }
-  
+
 }

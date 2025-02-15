@@ -22,6 +22,11 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class HandConstants{
+    public static final int HAND_MOTOR_ID = 10;
+    public static final int HAND_LIMIT_SWITCH_ID = 1;
+      }
+
   public static class ArmConstants {
 
     public static final int MotorYID = 0;
@@ -74,5 +79,37 @@ public final class Constants {
       public static final RobotType CURRENT_MODE = RobotType.REAL;
     }
 
+  }
+
+  public enum ElevatorLevels
+  {
+    HOME,
+    CORAL,
+    ONE,
+    TWO,
+    THREE,
+    FOUR,
+    //MAX;
+  }
+
+  //HOME is the MIN level of the elevator.
+  public static class ElevatorEncoderValues
+  {
+    public static final double HOME = 0;
+    public static final double CORAL = 2;
+    public static final double ONE = 4;
+    public static final double TWO = 6;
+    public static final double THREE = 8;
+    public static final double FOUR = 9.5;
+    //public static final double MAX = 10.25;
+  }
+
+  public static class ElevatorMotors {
+    public static final int LEFT_ID = 29;
+    public static final int RIGHT_ID = 50;
+  }
+
+  public static class ElevatorLimitSwitches {
+    public static final int BOTTOM_ID = 9;
   }
 }
