@@ -15,6 +15,11 @@ import frc.robot.commands.ElevatorGoToLevelCommand;
 import frc.robot.commands.ElevatorGoToLevelCommand.EncoderGetter;
 
 public class ElevatorSubsystem extends SubsystemBase {
+
+    /**
+     * A helper interface that schedules an update for the cached value of the
+     * Helper object.
+     */
     interface Helper {
         public void scheduleUpdate();
     }
@@ -100,9 +105,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double leftHomePos = Double.MAX_VALUE, rightHomePos = Double.MAX_VALUE;
 
     // The motors of the elevator.
-    private TalonFX elevatorLeftMotor = new TalonFX(Constants.ElevatorMotors.LEFT_ID),
-            elevatorRightMotor = new TalonFX(Constants.ElevatorMotors.RIGHT_ID);
+    private TalonFX elevatorLeftMotor = applyDefaultSettings(new TalonFX(Constants.ElevatorMotors.LEFT_ID), true),
+            elevatorRightMotor = applyDefaultSettings(new TalonFX(Constants.ElevatorMotors.RIGHT_ID), false);
 
+    // Stores the position PID that does the motor control.
     private final PositionVoltage LEFT_POS_VOLTAGE = new PositionVoltage(0).withSlot(0),
             RIGHT_POS_VOLTAGE = new PositionVoltage(0).withSlot(0);
 
@@ -125,35 +131,34 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Stores all the registered helpers.
     private Helper[] helpers = { bottomLimitSwitch, leftPos, rightPos };
 
+    /**
+     * Constructs an ElevatorSubsystem.
+     */
     public ElevatorSubsystem() {
-        // toplimitSwitch = new DigitalInput(8);
-
-        TalonFXConfiguration elevatorMotor1Config = getDefaultTalonFXConfiguration();
-        elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
-        elevatorLeftMotor.getPosition().setUpdateFrequency(50);
-        elevatorLeftMotor.optimizeBusUtilization();
-        // elevatorMotor1Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-        TalonFXConfiguration elevatorMotor2Config = getDefaultTalonFXConfiguration();
-        elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
-        elevatorRightMotor.getPosition().setUpdateFrequency(50);
-        elevatorRightMotor.optimizeBusUtilization();
-        // elevatorMotor2Config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
         setMotorNeutralMode(NeutralModeValue.Coast);
     }
 
     /**
-     * Constructs a TalonFXConfig with a default PID.
+     * Applies default settings to the motor.
+     * 
+     * @param motor                    is the motor to apply the settings to.
+     * @param counterClockwisePositive is true if the motor is counter clockwise
+     *                                 positive, false for clockwise positive.
+     * @return the motor with the default settings applied.
      */
-    private static TalonFXConfiguration getDefaultTalonFXConfiguration() {
+    private static TalonFX applyDefaultSettings(TalonFX motor, boolean counterClockwisePositive) {
         TalonFXConfiguration config = new TalonFXConfiguration();
         config.Slot0.kP = .7;
         config.Slot0.kI = .5;
         config.Slot0.kD = .1;
-        return config;
+        if (counterClockwisePositive)
+            config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        else
+            config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        motor.getConfigurator().apply(config);
+        motor.getPosition().setUpdateFrequency(50);
+        motor.optimizeBusUtilization();
+        return motor;
     }
 
     /**
@@ -279,37 +284,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorRightMotor.set(speed);
     }
 
-    @Deprecated
-    /**
-     * Gets the left motor of the elevator.
-     * 
-     * @return the left motor of the elevator.
-     */
-    public TalonFX getLeftMotor() {
-        return elevatorLeftMotor;
-    }
-
-    @Deprecated
-    /**
-     * Gets the right motor of the elevator.
-     * 
-     * @return the right motor of the elevator.
-     */
-    public TalonFX getRightMotor() {
-        return elevatorRightMotor;
-    }
-
-    @Deprecated
-    /**
-     * Sets the speed of the elevator motors.
-     * 
-     * @param speed is the speed of the motors to be set to.
-     */
-    public void set(double speed) {
-        elevatorLeftMotor.set(speed);
-        elevatorRightMotor.set(speed);
-    }
-
     /**
      * Gets the bottom limit switch of the elevator as a boolean.
      * 
@@ -317,46 +291,6 @@ public class ElevatorSubsystem extends SubsystemBase {
      */
     public boolean getBottomLimitSwitchAsBoolean() {
         return bottomLimitSwitch.get();
-    }
-
-    @Deprecated
-    /**
-     * Gets the home position of the left motor.
-     * 
-     * @return the the home position of the left motor.
-     */
-    public double getLeftHomePos() {
-        return leftHomePos;
-    }
-
-    @Deprecated
-    /**
-     * Gets the home position of the right motor.
-     * 
-     * @return the the home position of the right motor.
-     */
-    public double getRightHomePos() {
-        return rightHomePos;
-    }
-
-    @Deprecated
-    /**
-     * Sets the home position of the left motor.
-     * 
-     * @param leftHomePos is the home position of the left motor.
-     */
-    public void setLeftHomePos(double leftHomePos) {
-        this.leftHomePos = leftHomePos;
-    }
-
-    @Deprecated
-    /**
-     * Sets the home position of the right motor.
-     * 
-     * @param rightHomePos is the home position of the right motor.
-     */
-    public void setRightHomePos(double rightHomePos) {
-        this.rightHomePos = rightHomePos;
     }
 
     /**
@@ -401,13 +335,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorRightMotor.setNeutralMode(modeValue);
         isBraked = NeutralModeValue.Brake.equals(modeValue);
     }
-     /*
+
+    /*
      * Attempts to change the level of the elevator.
-     * @param increaseElevator is true if the elevator should increase in level, false if the elevator should decrease in level.
+     * 
+     * @param increaseElevator is true if the elevator should increase in level,
+     * false if the elevator should decrease in level.
+     * 
      * @return true if the elevator can change its level, false otherwise.
      */
-    public boolean changeLevel(boolean increaseElevator)
-    {
+    public boolean changeLevel(boolean increaseElevator) {
         throw new UnsupportedOperationException("Unimplemented method 'changeLevel'");
     }
 

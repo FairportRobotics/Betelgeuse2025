@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.io.ObjectInputFilter.Status;
 import java.security.DigestInputStream;
 
 import org.littletonrobotics.junction.Logger;
@@ -26,31 +27,33 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimberPositions;
 import frc.robot.Constants.ArmConstants.ArmPositions;
 
-public class ArmSubsystem extends SubsystemBase {
+public class ClimbingSubsystem extends SubsystemBase {
 
-  private TalonFX armYMotor;
+  private TalonFX climbingMotor;
   private DigitalInput limitSwitch;
   private StatusSignal absPos;
-  private ArmPositions pos;
+  private StatusSignal error;
+  private ClimberPositions pos;
   private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
   /** Creates a new ExampleSubsystem. */
-  public ArmSubsystem() {
-    armYMotor = new TalonFX(4, "rio");
+  public ClimbingSubsystem() {
+    climbingMotor = new TalonFX(4, "rio");
     limitSwitch = new DigitalInput(Constants.ArmConstants.LimitID);
-    pos = ArmPositions.DOWN;
+    pos = ClimberPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
         armYConfig.Slot0.kP = 0.8;
         armYConfig.Slot0.kI = 0.5;
         armYConfig.Slot0.kD = 0.3;
-        armYMotor.getConfigurator().apply(armYConfig);
-        absPos = armYMotor.getPosition();
+        climbingMotor.getConfigurator().apply(armYConfig);
+        absPos = climbingMotor.getPosition();
         absPos.setUpdateFrequency(50);
-        armYMotor.optimizeBusUtilization();
-    armYMotor.getConfigurator().apply(armYConfig, 0.050);
+        climbingMotor.optimizeBusUtilization();
+    climbingMotor.getConfigurator().apply(armYConfig, 0.050);
   }
 
   /**
@@ -70,18 +73,21 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    /*if (pos == ArmPositions.NONE) {
+    if (pos == ClimberPositions.NONE) {
 
-      this.armYMotor.set(0.1);
+      this.climbingMotor.set(0.1);
       if (!this.limitSwitch.get()) {
-        this.armYMotor.set(0.0);
-        pos = ArmPositions.UP;
-        armYMotor.setPosition(0);
-        absPos = armYMotor.getPosition();
+        this.climbingMotor.set(0.0);
+        pos = ClimberPositions.DOWN;
+        climbingMotor.setPosition(0);
+        absPos = climbingMotor.getPosition();
+        absPos.setUpdateFrequency(10);
+        error = climbingMotor.getClosedLoopError();
+        error.setUpdateFrequency(10);
       }
     }
     Logger.recordOutput("Arm at Home ", !limitSwitch.get());
-    */
+    
   }
 
   /**
@@ -91,22 +97,13 @@ public class ArmSubsystem extends SubsystemBase {
    *         can know what position the arm is curently set to. It's kinda
    *         usefull.
    */
-  public ArmPositions getArmPos() {
-    return pos;
-  }
-
-  public StatusSignal getPos(){
+  public StatusSignal getPos() {
     return absPos;
   }
 
   public StatusSignal getError(){
-    return armYMotor.getClosedLoopError();
+    return error;
   }
-
-  public boolean getSwitch(){
-    return !limitSwitch.get();
-  }
-
 
   /**
    * Set the value of the arm position.
@@ -114,16 +111,16 @@ public class ArmSubsystem extends SubsystemBase {
    * @param newPos New ArmPositions object to go to. This is important for keeping
    *               track of where the arm is. Maybe.
    */
-  public void setPos(ArmPositions newPos, PositionVoltage PosRequest) {
-    armYMotor.setNeutralMode(NeutralModeValue.Coast);
+  public void setPos(ClimberPositions newPos, PositionVoltage PosRequest) {
+    climbingMotor.setNeutralMode(NeutralModeValue.Coast);
     pos = newPos;
-    absPos = armYMotor.getPosition();
+    absPos = climbingMotor.getPosition();
     PosRequest = new PositionVoltage(0).withSlot(0);
-    armYMotor.setControl(PosRequest.withPosition(pos.getValue()));
+    climbingMotor.setControl(PosRequest.withPosition(pos.getValue()));
   }
 
   public void stopMotor(){
-    armYMotor.stopMotor();
+    climbingMotor.stopMotor();
   }
 
   @Override

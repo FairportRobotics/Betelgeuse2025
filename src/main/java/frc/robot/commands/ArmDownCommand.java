@@ -39,9 +39,9 @@ public class ArmDownCommand extends Command {
   public ArmDownCommand(ArmSubsystem subsystem) {
     m_subsystem = subsystem;
 
-    currentPos = m_subsystem.armYMotor.getPosition();
+    currentPos = m_subsystem.getPos();
 
-    posError = m_subsystem.armYMotor.getClosedLoopError();
+    posError = m_subsystem.getError();
 
     posRequest = new PositionVoltage(0).withSlot(0);
 
@@ -52,7 +52,7 @@ public class ArmDownCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pos = m_subsystem.getPos();
+    pos = m_subsystem.getArmPos();
     System.out.println("pos was " + pos);
     
 

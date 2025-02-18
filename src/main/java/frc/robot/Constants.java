@@ -22,10 +22,30 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
-  public static class HandConstants{
+  public static class HandConstants {
     public static final int HAND_MOTOR_ID = 10;
     public static final int HAND_LIMIT_SWITCH_ID = 1;
+  }
+
+  public enum ClimberPositions {
+    UP(1),
+    DOWN(3),
+    NONE(0);
+
+    double wa;
+
+    private ClimberPositions(double value) {
+      this.wa = value;
+    }
+    /**
+       * Get the value of the ArmPositions Object
+       * 
+       * @return A double that is to be used for seting the position of the arm.
+       */
+      public double getValue() {
+        return wa;
       }
+  }
 
   public static class ArmConstants {
 

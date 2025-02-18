@@ -4,9 +4,10 @@
 
 package frc.robot.commands;
 
-
+import frc.robot.Constants.ClimberPositions;
 import frc.robot.Constants.ArmConstants.ArmPositions;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimbingSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
 
 import com.ctre.phoenix6.StatusSignal;
@@ -19,29 +20,29 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /** An example command that uses an example subsystem. */
-public class SetArmPosCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
-  private final ArmSubsystem m_subsystem;
-  private ArmPositions pos;
+public class ClimberDown extends Command {
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
+  private final ClimbingSubsystem m_subsystem;
+  private ClimberPositions pos;
   private StatusSignal<Angle> currentPos;
 
   private StatusSignal<Double> posError;
 
   final PositionVoltage posRequest;
+
   /**
-   * Creates a new SetArmPosCommand.
-   * This command sets the arm positon to the passed in position.
+   * Creates a new ClimberDown command.
+   * ClimberDown brings the Climber down.
+   * It's quite self explanitorty.
    * 
-   * @param subsystem The ArmSubsystem. This is needed. Because. Just because.
-   * @param newPos The requested position of the arm. You can find what diffrent positions there are in Constants.java
+   * @param subsystem The ClimbingSubsystem. If you don't give it this, it
+   *                  explodes.
    */
-  public SetArmPosCommand(ArmSubsystem subsystem, ArmPositions newPos) {
+  public ClimberDown(ClimbingSubsystem subsystem) {
     m_subsystem = subsystem;
-    pos = newPos;
-    posError = m_subsystem.getError();
+    pos = ClimberPositions.DOWN;
 
     posRequest = new PositionVoltage(0).withSlot(0);
-
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -50,32 +51,42 @@ public class SetArmPosCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_subsystem.setPos(pos,posRequest);
+    currentPos = m_subsystem.getPos();
+
+    posError = m_subsystem.getError();
+
+    m_subsystem.setPos(pos, posRequest);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    m_subsystem.stopMotor();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     posError.refresh();
+    currentPos.refresh();
+    // if (pos == ArmPositions.UP) {
+    // return !m_subsystem.limitSwitch.get();
+    // }
+    /* else /* */ if (currentPos.hasUpdated()) {
+      System.out.println("currentPos updated :D");
+      SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
+      System.out.println(currentPos.getValueAsDouble());
+      System.out.println(Math.abs(currentPos.getValueAsDouble() - (pos.getValue())));
+      return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue())) <= 0.1);
+    }
 
-        if (pos == ArmPositions.UP) {
-            return m_subsystem.getSwitch();
-        } 
-        else if (currentPos.hasUpdated()) {
-
-            SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
-
-            return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
-        }
-
-        return false;
+    return false;
   }
+
 }

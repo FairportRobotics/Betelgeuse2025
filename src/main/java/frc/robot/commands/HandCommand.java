@@ -20,7 +20,7 @@ public class HandCommand extends Command {
   /**
    * Creates a new HandCommand.
    * HandCommand causees the neo in the hand to spin off the given value either
-   * intakeing or outakeing
+   * intaking or outaking (positive for intake, negative for outake)
    * 
    * @param subsystem The HandSubsystem.
    */
@@ -42,7 +42,7 @@ public class HandCommand extends Command {
     return handLimitSwitch.get();
   }
 
-  // Ends the movement of the motor
+  // Stops the movement of the motor.
   @Override
   public void end(boolean interrupted) {
     _HandSubsystem.setSpeed(0.0);
