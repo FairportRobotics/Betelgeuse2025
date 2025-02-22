@@ -38,14 +38,15 @@ public final class Constants {
     private ClimberPositions(double value) {
       this.wa = value;
     }
+
     /**
-       * Get the value of the ArmPositions Object
-       * 
-       * @return A double that is to be used for seting the position of the arm.
-       */
-      public double getValue() {
-        return wa;
-      }
+     * Get the value of the ArmPositions Object
+     * 
+     * @return A double that is to be used for seting the position of the arm.
+     */
+    public double getValue() {
+      return wa;
+    }
   }
 
   public static class ArmConstants {
@@ -116,11 +117,10 @@ public final class Constants {
     public static final int ALGAELIMIT = 0;
     public static final int ARMLIMIT = 1;
     public static final int CLIMBERLIMIT = 2;
-    public static final int ELEVATORLIMIT = 3;
+    public static final int ELEVATORLIMIT = 9;
     public static final int HANDLIMIT = 4;
     public static final int HOPPERBEAM = 5;
 
-    
   }
 
   // HOME is the MIN level of the elevator.

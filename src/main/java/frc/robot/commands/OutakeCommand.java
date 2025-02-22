@@ -4,18 +4,17 @@
 
 package frc.robot.commands;
 
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HandSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
 public class OutakeCommand extends Command {
-  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField", "unused"})
+  @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final HandSubsystem m_subsystem;
 
-  
   /**
-   * Creates a new OutakeCommand. IMPORTANT: THIS SHOULD BE CREATED WITH A DEADLINE
+   * Creates a new OutakeCommand. IMPORTANT: THIS SHOULD BE CREATED WITH A
+   * DEADLINE
    *
    * @param subsystem The subsystem used by this command.
    */
@@ -27,7 +26,8 @@ public class OutakeCommand extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -44,6 +44,6 @@ public class OutakeCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false; //Should be handeled by a deadline
+    return false; // Should be handeled by a deadline
   }
 }

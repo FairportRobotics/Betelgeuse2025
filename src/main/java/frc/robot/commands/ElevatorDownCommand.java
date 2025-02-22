@@ -11,13 +11,7 @@ public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
      * @param elevatorSubsystem The elevator subsystem used by this command.
      */
     public ElevatorDownCommand(ElevatorSubsystem elevatorSubsystem) {
-        super(elevatorSubsystem);
-    }
-
-    @Override
-    public void execute() {
-        goToLevel = getLevel(elevatorSubsystem.getGoToLevel());
-        super.execute();
+        super(elevatorSubsystem, getLevel(elevatorSubsystem.getGoToLevel()));
     }
 
     /**
@@ -42,7 +36,5 @@ public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
     private static boolean validToMoveDown(ElevatorLevels currentLevel) {
         return !ElevatorLevels.values()[0].equals(currentLevel);
     }
-
-    
 
 }

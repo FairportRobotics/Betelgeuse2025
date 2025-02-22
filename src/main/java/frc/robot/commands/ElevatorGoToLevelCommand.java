@@ -33,19 +33,6 @@ public class ElevatorGoToLevelCommand extends Command {
     }
 
     /**
-     * Creates a new ElevatorGoToLevelCommand, Accessible only to the class and its
-     * subclasses.
-     * 
-     * @param elevatorSubsystem    is the elevator subsystem used by this command.
-     * @param preExecutionRunnable is the code to run before the command sets the
-     *                             level of the elevator.
-     */
-    protected ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem) {
-        addRequirements(elevatorSubsystem);
-        this.elevatorSubsystem = elevatorSubsystem;
-    }
-
-    /**
      * Sets the level of the elevator to the given level after executing any
      * existing runnables.
      */
