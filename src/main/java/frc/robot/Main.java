@@ -7,28 +7,29 @@ package frc.robot;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Main {
-  private static Boolean robotWorks;
-  private Main() {}
-
   public static void main(String... args) throws RobotDontWorkException {
-    robotWorks = true;
-    if (robotWorks) {
+    if (mustBeTrue()) {
       RobotBase.startRobot(Robot::new);
-    }
-    else {
+    } else {
       throw new RobotDontWorkException("Robot don't work");
     }
   }
 
-  public static class RobotDontWorkException extends Exception
-{
-      // Parameterless Constructor
-      public RobotDontWorkException() {}
+  private static boolean mustBeTrue() {
+    boolean isTrue = true;
+    if (isTrue)
+      return true;
+    return mustBeTrue();
+  }
 
-      // Constructor that accepts a message
-      public RobotDontWorkException(String message)
-      {
-         super(message);
-      }
- }
+  public static class RobotDontWorkException extends Exception {
+    // Parameterless Constructor
+    public RobotDontWorkException() {
+    }
+
+    // Constructor that accepts a message
+    public RobotDontWorkException(String message) {
+      super(message);
+    }
+  }
 }
