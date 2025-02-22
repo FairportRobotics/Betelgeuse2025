@@ -84,10 +84,9 @@ public class ClimbingSubsystem extends SubsystemBase {
   }
 
   /**
-   * Set the value of the arm position.
+   * Set the position for the climber.
    *
-   * @param newPos New ArmPositions object to go to. This is important for keeping
-   *               track of where the arm is. Maybe.
+   * @param newPos The new ClimberPositions to go to. Big Tyler is watching.
    */
   public void setPos(ClimberPositions newPos) {
     climbingMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -96,6 +95,9 @@ public class ClimbingSubsystem extends SubsystemBase {
     climbingMotor.setControl(m_position.withPosition(pos.getValue()));
   }
 
+  /**
+   * Take a wild guess
+   */
   public void stopMotor(){
     climbingMotor.stopMotor();
   }
