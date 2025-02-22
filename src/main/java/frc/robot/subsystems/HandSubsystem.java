@@ -5,14 +5,15 @@ import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants; 
+import frc.robot.Constants;
+import frc.robot.Constants.DIOValues; 
 
 public class HandSubsystem extends SubsystemBase {
 
   
   public static Object getSwitch;
   private SparkMax handMotor = new SparkMax(Constants.HandConstants.HAND_MOTOR_ID, MotorType.kBrushless);
-  private DigitalInput handLimitSwitch = new DigitalInput(Constants.HandConstants.HAND_LIMIT_SWITCH_ID);
+  private DigitalInput handLimitSwitch = new DigitalInput(DIOValues.HANDLIMIT);
   // public SparkClosedLoopController m_controller = handMotor.getClosedLoopController();
   private boolean hazPiece;
   /** Creates a new ExampleSubsystem. */

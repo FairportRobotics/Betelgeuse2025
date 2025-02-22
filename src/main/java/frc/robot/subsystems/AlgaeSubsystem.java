@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import frc.robot.Constants.DIOValues;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -30,7 +31,7 @@ public class AlgaeSubsystem extends SubsystemBase
 
     krakenMotor = new TalonFX(0);
     wheelSpin = new SparkMax(0, null);//deal with paramaters later
-    limitSwitch= new DigitalInput(0);
+    limitSwitch= new DigitalInput(DIOValues.ALGAELIMIT);
        //PID LOOP
       TalonFXConfiguration krakenConfig = new TalonFXConfiguration();
       krakenConfig.Slot0.kP = 0.8;

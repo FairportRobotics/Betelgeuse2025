@@ -32,8 +32,7 @@ public class ArmDownCommand extends Command {
    * ArmDownCommand brings the arm down 1 position if the current position is not
    * less than or equal to the DOWN positon
    * 
-   * @param subsystem The ArmSubsystem. You know... the thing... that does... the
-   *                  thing...
+   * @param subsystem The ArmSubsystem. If you don't give it, the robot explodes.
    */
   public ArmDownCommand(ArmSubsystem subsystem) {
     m_subsystem = subsystem;

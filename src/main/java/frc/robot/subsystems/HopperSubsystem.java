@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DIOValues;
 import frc.robot.Constants.ElevatorLevels;
 import frc.robot.commands.ElevatorGoToLevelCommand;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -17,7 +18,7 @@ public class HopperSubsystem extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public HopperSubsystem(Command p_autoIntakeCommand) {
-    beamBreak = new DigitalInput(0);
+    beamBreak = new DigitalInput(DIOValues.HOPPERBEAM);
     m_autoIntakeCommand = p_autoIntakeCommand;
 
   }

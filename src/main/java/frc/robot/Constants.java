@@ -112,6 +112,17 @@ public final class Constants {
     // MAX;
   }
 
+  public static class DIOValues {
+    public static final int ALGAELIMIT = 0;
+    public static final int ARMLIMIT = 1;
+    public static final int CLIMBERLIMIT = 2;
+    public static final int ELEVATORLIMIT = 3;
+    public static final int HANDLIMIT = 4;
+    public static final int HOPPERBEAM = 5;
+
+    
+  }
+
   // HOME is the MIN level of the elevator.
   public static class ElevatorEncoderValues {
     public static final double HOME = 0;

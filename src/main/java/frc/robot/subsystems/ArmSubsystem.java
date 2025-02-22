@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DIOValues;
 import frc.robot.Constants.ArmConstants.ArmPositions;
 
 public class ArmSubsystem extends SubsystemBase {
@@ -32,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     armYMotor = new TalonFX(4, "rio");
-    limitSwitch = new DigitalInput(Constants.ArmConstants.LimitID);
+    limitSwitch = new DigitalInput(DIOValues.ARMLIMIT);
     pos = ArmPositions.DOWN;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
