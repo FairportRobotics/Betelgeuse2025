@@ -39,7 +39,19 @@ public class RobotContainer {
   private final ElevatorSubsystem m_ElevatorSubsystem = new ElevatorSubsystem();
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
   private final HandSubsystem m_HandSubsystem = new HandSubsystem();
-  private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(Commands.parallel(new ElevatorGoToLevelCommand(m_ElevatorSubsystem,ElevatorLevels.HOME), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN), new IntakeCommand(m_HandSubsystem) ));
+  private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(
+    Commands.sequence(
+      new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
+      Commands.parallel(
+        new ElevatorGoToLevelCommand(m_ElevatorSubsystem,ElevatorLevels.ONE),
+        new IntakeCommand(m_HandSubsystem) 
+        ),
+      Commands.parallel(
+        new ElevatorGoToLevelCommand(m_ElevatorSubsystem,ElevatorLevels.TWO),
+        new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE)
+      )
+    )
+    );
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =

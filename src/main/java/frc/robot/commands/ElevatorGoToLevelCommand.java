@@ -60,7 +60,7 @@ public class ElevatorGoToLevelCommand extends Command {
      */
     @Override
     public final boolean isFinished() {
-        return true;
+        return elevatorSubsystem.isFinishedMoving();
     }
 
     /**

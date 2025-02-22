@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /** An example command that uses an example subsystem. */
-public class ClimberDown extends Command {
+public class ClimberOut extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final ClimbingSubsystem m_subsystem;
   private ClimberPositions pos;
@@ -30,9 +30,9 @@ public class ClimberDown extends Command {
    * @param subsystem The ClimbingSubsystem. If you don't give it this, it
    *                  explodes.
    */
-  public ClimberDown(ClimbingSubsystem subsystem) {
+  public ClimberOut(ClimbingSubsystem subsystem) {
     m_subsystem = subsystem;
-    pos = ClimberPositions.DOWN;
+    pos = ClimberPositions.OUT;
 
 
     // Use addRequirements() here to declare subsystem dependencies.

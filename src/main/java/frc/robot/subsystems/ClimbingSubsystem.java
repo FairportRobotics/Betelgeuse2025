@@ -53,7 +53,7 @@ public class ClimbingSubsystem extends SubsystemBase {
       this.climbingMotor.set(0.1);
       if (!this.limitSwitch.get()) {
         this.climbingMotor.set(0.0);
-        pos = ClimberPositions.DOWN;
+        pos = ClimberPositions.HOME;
         climbingMotor.setPosition(0);
         absPos = climbingMotor.getPosition();
         absPos.setUpdateFrequency(10);

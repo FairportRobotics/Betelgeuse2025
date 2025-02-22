@@ -42,4 +42,7 @@ public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
     private static boolean validToMoveDown(ElevatorLevels currentLevel) {
         return !ElevatorLevels.values()[0].equals(currentLevel);
     }
+
+    
+
 }

@@ -14,9 +14,9 @@ public class IntakeCommand extends Command {
   private final HandSubsystem m_subsystem;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new IntakeCommand.
    *
-   * @param subsystem The subsystem used by this command.
+   * @param subsystem The HandSubsystem. Yummy Yummy in my tummy.
    */
   public IntakeCommand(HandSubsystem subsystem) {
     m_subsystem = subsystem;

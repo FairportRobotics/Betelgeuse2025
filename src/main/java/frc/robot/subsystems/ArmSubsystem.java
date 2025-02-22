@@ -29,7 +29,7 @@ public class ArmSubsystem extends SubsystemBase {
   private ArmPositions pos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
 
-  /** Creates a new ExampleSubsystem. */
+  /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     armYMotor = new TalonFX(4, "rio");
     limitSwitch = new DigitalInput(Constants.ArmConstants.LimitID);
@@ -120,6 +120,9 @@ public class ArmSubsystem extends SubsystemBase {
     armYMotor.setControl(m_voltage.withPosition(pos.getValue()));
   }
 
+  /**
+   * What do you think this does?
+   */
   public void stopMotor(){
     armYMotor.stopMotor();
   }

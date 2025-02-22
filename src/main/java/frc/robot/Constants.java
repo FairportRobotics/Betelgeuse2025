@@ -30,7 +30,7 @@ public final class Constants {
   public enum ClimberPositions {
     IN(1),
     OUT(2),
-    DOWN(3),
+    HOME(3),
     NONE(0);
 
     double wa;

@@ -353,4 +353,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeftMotor.setControl(LEFT_POS_VOLTAGE.withPosition(leftHomePos + position));
         elevatorRightMotor.setControl(RIGHT_POS_VOLTAGE.withPosition(rightHomePos + position));
     }
+
+    public boolean isFinishedMoving(){
+        return isBraked;
+    }
 }
