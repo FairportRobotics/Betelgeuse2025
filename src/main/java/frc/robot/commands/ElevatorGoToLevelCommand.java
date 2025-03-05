@@ -32,12 +32,12 @@ public class ElevatorGoToLevelCommand extends Command {
     }
 
     @Override
-    public final boolean isFinished() {
+    public boolean isFinished() {
         return elevatorSubsystem.isAtLevel();
     }
 
     @Override
-    public final void end(boolean interrupted) {
+    public void end(boolean interrupted) {
         elevatorSubsystem.stopElevator();
     }
 }

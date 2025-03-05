@@ -16,6 +16,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorLevels;
+import frc.robot.commands.DefaultArmDownMoveElevatorToPlayerStation;
 
 public class ElevatorSubsystem extends TestableSubsystem {
   private ElevatorLevels goToLevel = ElevatorLevels.HOME;
@@ -33,8 +34,11 @@ public class ElevatorSubsystem extends TestableSubsystem {
   private StatusSignal<Double> leftError;
   private StatusSignal<Double> rightError;
 
+  private ArmSubsystem armSubsystem;
+
   public ElevatorSubsystem(ArmSubsystem armSubsystem) {
     super("ElevatorSubsystem");
+    Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
 
     // toplimitSwitch = new DigitalInput(8);
     bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATORLIMIT);
@@ -71,6 +75,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
       return elevatorRightMotor.isConnected();
     });
 
+    this.armSubsystem = armSubsystem;
+    // setDefaultCommand(new MoveElevatorBecauseOfArmPosition(this, armSubsystem));
   }
 
   @Override
@@ -110,9 +116,12 @@ public class ElevatorSubsystem extends TestableSubsystem {
   /**
    * Check for the level of elevator.
    * 
-   * @return true if the elevator is currently at the correct level.
+   * @return true if the elevator is currently at the correct level or needs to
+   *         stop for other reasons.
    */
   public boolean isAtLevel() {
+    if (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmConstants.ArmPositions.DOWN)
+      return true;
     if (goToLevel == ElevatorLevels.HOME)
       return bottomlimitSwitch.get();
     return Math.abs(leftError.refresh().getValue()) < 0.1 || Math.abs(rightError.refresh().getValue()) < 0.1;
@@ -121,21 +130,22 @@ public class ElevatorSubsystem extends TestableSubsystem {
   /**
    * Move the elevator to the desired level.
    * 
-   * @param level The level to move the elevator to.
+   * @param setLevel The level to move the elevator to.
    */
-  public void moveElevator(ElevatorLevels level) {
-    if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE)
+  public void moveElevator(ElevatorLevels setLevel) {
+    if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE
+        || (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmConstants.ArmPositions.DOWN))
       return;
-    Objects.requireNonNull(level, "level cannot be null");
-    goToLevel = level;
+    Objects.requireNonNull(setLevel, "level cannot be null");
+    goToLevel = setLevel;
     elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
     elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
-    if (level == ElevatorLevels.HOME) {
+    if (setLevel == ElevatorLevels.HOME) {
       elevatorLeftMotor.set(-0.1);
       elevatorRightMotor.set(-0.1);
     } else {
-      elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + level.getRotationUnits()));
-      elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + level.getRotationUnits()));
+      elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setLevel.getRotationUnits()));
+      elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setLevel.getRotationUnits()));
     }
   }
 
