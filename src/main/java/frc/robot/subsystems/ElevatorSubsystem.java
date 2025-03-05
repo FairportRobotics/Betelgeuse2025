@@ -49,7 +49,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     leftError = elevatorLeftMotor.getClosedLoopError();
     leftPos.setUpdateFrequency(50);
     elevatorLeftMotor.optimizeBusUtilization();
-    // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
+    elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
     TalonFXConfiguration elevatorMotor2Config = new TalonFXConfiguration();
     elevatorMotor2Config.Slot0.kP = 0.7;
@@ -61,7 +61,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     rightError = elevatorRightMotor.getClosedLoopError();
     rightPos.setUpdateFrequency(50);
     elevatorRightMotor.optimizeBusUtilization();
-    // elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+    elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
 
     registerPOSTTest("Left Motor Connected", () -> {
       return elevatorLeftMotor.isConnected();
@@ -76,6 +76,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
   @Override
   public void periodic() {
     if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE) {
+
+      this.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
+      this.elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
 
       this.elevatorLeftMotor.set(-0.1);
       this.elevatorRightMotor.set(-0.1);
