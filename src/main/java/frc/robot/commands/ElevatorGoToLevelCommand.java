@@ -9,7 +9,7 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorGoToLevelCommand extends Command {
 
     protected ElevatorSubsystem elevatorSubsystem;
-    private ElevatorLevels level;
+    protected ElevatorLevels level;
 
     public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, ElevatorLevels level) {
         Objects.requireNonNull(elevatorSubsystem, "elevator subsystem cannot be null");

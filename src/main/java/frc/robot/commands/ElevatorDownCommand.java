@@ -11,7 +11,7 @@ public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
 
     @Override
     public void execute() {
-        int indexOfGoToLevel = elevatorSubsystem.getGoToLevel().ordinal();
+        int indexOfGoToLevel = level.ordinal();
         if (indexOfGoToLevel == 0)
             return;
         elevatorSubsystem.moveElevator(ElevatorLevels.values()[indexOfGoToLevel - 1]);
