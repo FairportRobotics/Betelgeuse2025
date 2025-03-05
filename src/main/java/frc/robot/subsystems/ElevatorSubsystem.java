@@ -20,12 +20,12 @@ import frc.robot.Constants.ElevatorLevels;
 public class ElevatorSubsystem extends TestableSubsystem {
   private ElevatorLevels goToLevel = ElevatorLevels.HOME;
 
-  public double rightHomePos = Double.MAX_VALUE;
-  public double leftHomePos = Double.MAX_VALUE;
+  private double rightHomePos = Double.MAX_VALUE;
+  private double leftHomePos = Double.MAX_VALUE;
 
-  public TalonFX elevatorLeftMotor = new TalonFX(Constants.ElevatorMotors.LEFT_ID);
-  public TalonFX elevatorRightMotor = new TalonFX(Constants.ElevatorMotors.RIGHT_ID);
-  public DigitalInput bottomlimitSwitch;
+  private TalonFX elevatorLeftMotor = new TalonFX(Constants.ElevatorMotors.LEFT_ID);
+  private TalonFX elevatorRightMotor = new TalonFX(Constants.ElevatorMotors.RIGHT_ID);
+  private DigitalInput bottomlimitSwitch;
 
   private StatusSignal<Angle> leftPos;
   private StatusSignal<Angle> rightPos;
@@ -121,7 +121,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
    * @param level The level to move the elevator to.
    */
   public void moveElevator(ElevatorLevels level) {
-    Objects.requireNonNull(level, "goToLevel cannot be set to null");
+    if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE)
+      return;
+    Objects.requireNonNull(level, "level cannot be null");
     goToLevel = level;
     elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
     elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
@@ -132,6 +134,16 @@ public class ElevatorSubsystem extends TestableSubsystem {
       elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + level.getRotationUnits()));
       elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + level.getRotationUnits()));
     }
+  }
+
+  /**
+   * Move the elevator to the desired position.
+   * 
+   * @param position The position to move the elevator to.
+   */
+  public void moveElevator(double position) {
+    elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + position));
+    elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + position));
   }
 
   /**
