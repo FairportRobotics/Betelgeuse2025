@@ -1,10 +1,13 @@
 package frc.robot.subsystems;
 
+import java.util.Objects;
+
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -12,8 +15,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
+import frc.robot.Constants.ElevatorLevels;
 
 public class ElevatorSubsystem extends TestableSubsystem {
+  private ElevatorLevels goToLevel = ElevatorLevels.HOME;
 
   public double rightHomePos = Double.MAX_VALUE;
   public double leftHomePos = Double.MAX_VALUE;
@@ -25,12 +30,11 @@ public class ElevatorSubsystem extends TestableSubsystem {
   private StatusSignal<Angle> leftPos;
   private StatusSignal<Angle> rightPos;
 
-  private ArmSubsystem armSubsystem;
+  private StatusSignal<Double> leftError;
+  private StatusSignal<Double> rightError;
 
   public ElevatorSubsystem(ArmSubsystem armSubsystem) {
     super("ElevatorSubsystem");
-
-    this.armSubsystem = armSubsystem;
 
     // toplimitSwitch = new DigitalInput(8);
     bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATORLIMIT);
@@ -42,6 +46,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
     leftPos = elevatorLeftMotor.getPosition();
+    leftError = elevatorLeftMotor.getClosedLoopError();
     leftPos.setUpdateFrequency(50);
     elevatorLeftMotor.optimizeBusUtilization();
     // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -53,6 +58,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
     rightPos = elevatorRightMotor.getPosition();
+    rightError = elevatorRightMotor.getClosedLoopError();
     rightPos.setUpdateFrequency(50);
     elevatorRightMotor.optimizeBusUtilization();
     // elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -98,4 +104,52 @@ public class ElevatorSubsystem extends TestableSubsystem {
     Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValue());
   }
 
+  /**
+   * Check for the level of elevator.
+   * 
+   * @return true if the elevator is currently at the correct level.
+   */
+  public boolean isAtLevel() {
+    if (goToLevel == ElevatorLevels.HOME)
+      return bottomlimitSwitch.get();
+    return Math.abs(leftError.refresh().getValue()) < 0.1 || Math.abs(rightError.refresh().getValue()) < 0.1;
+  }
+
+  /**
+   * Move the elevator to the desired level.
+   * 
+   * @param level The level to move the elevator to.
+   */
+  public void moveElevator(ElevatorLevels level) {
+    Objects.requireNonNull(level, "goToLevel cannot be set to null");
+    goToLevel = level;
+    elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
+    elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
+    if (level == ElevatorLevels.HOME) {
+      elevatorLeftMotor.set(-0.1);
+      elevatorRightMotor.set(-0.1);
+    } else {
+      elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + level.getRotationUnits()));
+      elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + level.getRotationUnits()));
+    }
+  }
+
+  /**
+   * Stops the elevator.
+   */
+  public void stopElevator() {
+    elevatorLeftMotor.stopMotor();
+    elevatorRightMotor.stopMotor();
+    elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
+    elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+  }
+
+  /**
+   * Get the level the elevator is currently at.
+   * 
+   * @return The level the elevator is currently at.
+   */
+  public ElevatorLevels getGoToLevel() {
+    return goToLevel;
+  }
 }
