@@ -76,7 +76,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     });
 
     this.armSubsystem = armSubsystem;
-    // setDefaultCommand(new MoveElevatorBecauseOfArmPosition(this, armSubsystem));
+    // setDefaultCommand(new DefaultArmDownMoveElevatorToPlayerStation(this,
+    // armSubsystem));
   }
 
   @Override
