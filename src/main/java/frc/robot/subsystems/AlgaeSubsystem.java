@@ -34,7 +34,7 @@ public class AlgaeSubsystem extends TestableSubsystem
     super("AlgaeSubsystem");
     fenceMotor = new TalonFX(17); //Kraken motor
     wheelSpin = new SparkMax(18, null);//Neo motor
-    limitSwitch= new DigitalInput(DIOValues.ALGAELIMIT);
+    limitSwitch= new DigitalInput(DIOValues.ALGAE_LIMIT_SWITCH);
       //PID LOOP
       TalonFXConfiguration krakenConfig = new TalonFXConfiguration();
       krakenConfig.Slot0.kP = 0.8;

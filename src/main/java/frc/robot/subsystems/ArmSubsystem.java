@@ -16,8 +16,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.Constants.ArmConstants.ArmPositions;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.ArmPositions;
+import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.DIOValues;
 
 public class ArmSubsystem extends TestableSubsystem {
@@ -32,9 +32,9 @@ public class ArmSubsystem extends TestableSubsystem {
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     super("ArmSubsystem");
-    armYMotor = new TalonFX(ArmConstants.ARMMOTOR, "rio"); // TODO: FIX ID
+    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio"); // TODO: FIX ID
     armYMotor.setNeutralMode(NeutralModeValue.Brake);
-    topSwitch = new DigitalInput(DIOValues.ARMLIMIT);
+    topSwitch = new DigitalInput(DIOValues.ARM_LIMIT_SWITCH);
     targetPos = ArmPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();

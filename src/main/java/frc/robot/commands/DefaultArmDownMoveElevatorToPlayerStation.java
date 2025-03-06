@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorLevels;
+import frc.robot.Constants.ElevatorPositions;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
@@ -16,8 +16,8 @@ public class DefaultArmDownMoveElevatorToPlayerStation extends ElevatorGoToLevel
 
     @Override
     public void execute() {
-        if (armSubsystem.getArmPos() == Constants.ArmConstants.ArmPositions.DOWN)
-            elevatorSubsystem.moveElevator(ElevatorLevels.HUMAN_PLAYER_STATION);
+        if (armSubsystem.getArmPos() == Constants.ArmPositions.DOWN)
+            elevatorSubsystem.moveElevator(ElevatorPositions.HUMAN_PLAYER_STATION);
     }
 
     @Override

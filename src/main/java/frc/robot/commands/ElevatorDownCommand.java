@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import frc.robot.Constants.ElevatorLevels;
+import frc.robot.Constants.ElevatorPositions;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
@@ -11,9 +11,9 @@ public class ElevatorDownCommand extends ElevatorGoToLevelCommand {
 
     @Override
     public void execute() {
-        int indexOfGoToLevel = level.ordinal();
+        int indexOfGoToLevel = position.ordinal();
         if (indexOfGoToLevel == 0)
             return;
-        elevatorSubsystem.moveElevator(ElevatorLevels.values()[indexOfGoToLevel - 1]);
+        elevatorSubsystem.moveElevator(ElevatorPositions.values()[indexOfGoToLevel - 1]);
     }
 }

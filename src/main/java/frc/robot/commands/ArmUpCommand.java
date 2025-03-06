@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ArmConstants.ArmPositions;
+import frc.robot.Constants.ArmPositions;
 import frc.robot.subsystems.ArmSubsystem;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;

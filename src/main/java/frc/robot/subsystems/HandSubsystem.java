@@ -15,8 +15,8 @@ public class HandSubsystem extends TestableSubsystem {
 
   
   public static Object getSwitch;
-  private SparkMax handMotor = new SparkMax(Constants.HandConstants.HAND_MOTOR_ID, MotorType.kBrushless);
-  private DigitalInput handLimitSwitch = new DigitalInput(DIOValues.HANDLIMIT);
+  private SparkMax handMotor = new SparkMax(Constants.CanBusIds.HAND_MOTOR_ID, MotorType.kBrushless);
+  private DigitalInput handLimitSwitch = new DigitalInput(DIOValues.HAND_LIMIT_SWITCH);
   // public SparkClosedLoopController m_controller = handMotor.getClosedLoopController();
   private boolean hazPiece;
   /** Creates a new ExampleSubsystem. */

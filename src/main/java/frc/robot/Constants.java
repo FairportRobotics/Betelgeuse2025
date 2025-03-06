@@ -17,13 +17,36 @@ package frc.robot;
  */
 public final class Constants {
 
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+  public static class AdvantageKitConstants {
+    public enum RobotType {
+      SIM,
+      REAL,
+      REPLAY
+    }
+
+    public static final RobotType CURRENT_MODE = RobotType.REAL;
   }
 
-  public static class HandConstants {
-    public static final int HAND_MOTOR_ID = 16;
-    public static final int HAND_LIMIT_SWITCH_ID = 1;
+  public static class CanBusIds {
+    public static final int ELEVATOR_RIGHT_MOTOR_ID = 13;
+    public static final int ELEVATOR_LEFT_MOTOR_ID  = 14;
+    public static final int ARM_MOTOR_ID            = 15;
+    public static final int HAND_MOTOR_ID           = 16;
+    public static final int CLIMBER_MOTOR_ID        = 19;
+  }
+
+  public static class DIOValues {
+    public static final int ALGAE_LIMIT_SWITCH        = 0; // NOT DEFINED
+    public static final int ARM_LIMIT_SWITCH          = 0; // NOT DEFINED
+    public static final int HAND_LIMIT_SWITCH         = 1;
+    public static final int ELEVATOR_LIMIT_SWITCH     = 2;
+    public static final int CLIMBER_LIMIT_SWITCH      = 4;
+    public static final int HOPPER_BEAM_BREAK_SENSOR  = 5;
+  }
+
+  public static class ControllerIds {
+    public static final int DRIVER_CONTROLLER_PORT    = 0;
+    public static final int OPERATOR_CONTROLLER_PORT  = 1;
   }
 
   public enum ClimberPositions {
@@ -32,118 +55,66 @@ public final class Constants {
     HOME(3),
     NONE(0);
 
-    double wa;
+    double mClimberPosition;
 
     private ClimberPositions(double value) {
-      this.wa = value;
+      mClimberPosition = value;
     }
-    /**
-       * Get the value of the ArmPositions Object
-       * 
-       * @return A double that is to be used for seting the position of the arm.
-       */
-      public double getValue() {
-        return wa;
-      }
-  }
-
-  public static class ArmConstants {
-
-    public static final int ARMMOTOR = 15;
-    public static final int LimitID = 0;
-    public static final int CLIMBERMOTOR = 19;
 
     /**
-     * The ArmPositions Enum is used to store positons for the arm. There are 4
-     * values.
-     * - UP 
-     * - MIDDLE
-     * - DOWN
-     * - NONE
-     * Each has a double that can be accesed with ArmPositions.getValue. Each value
-     * only has one double. No more, no less. If thou shall try to get two, thou
-     * shall only get one, and one shall be the number given. Trying to get three is
-     * outright.
+     * Get the value of the ClimberPositions Object
      * 
+     * @return A double that is to be used for seting the position of the climber.
      */
-    public enum ArmPositions {
-      UP(0),
-      MIDDLE(.25),
-      DOWN(.5),
-      NONE(0);
-      
-
-      double wa;
-
-      private ArmPositions(double value) {
-        this.wa = value;
-      }
-
-      /**
-       * Get the value of the ArmPositions Object
-       * 
-       * @return A double that is to be used for seting the position of the arm.
-       */
-      public double getValue() {
-        return wa;
-      }
+    public double getValue() {
+      return mClimberPosition;
     }
-
-    public static class AdvantageKitConstants {
-      public enum RobotType {
-        SIM,
-        REAL,
-        REPLAY
-      }
-
-      public static final RobotType CURRENT_MODE = RobotType.REAL;
-    }
-
   }
 
-  public enum ElevatorLevels {
+  /**
+   * The ArmPositions Enum is used to store positons for the arm.
+   */
+  public enum ArmPositions {
+    UP(0),
+    MIDDLE(.25),
+    DOWN(.5),
+    NONE(0);
+
+    double mArmPosition;
+
+    private ArmPositions(double value) {
+      mArmPosition = value;
+    }
+
+    /**
+     * Get the value of the ArmPositions Object
+     * 
+     * @return A double that is to be used for seting the position of the arm.
+     */
+    public double getValue() {
+      return mArmPosition;
+    }
+  }
+
+  /** Defines the rotationUnits required to get to each level from
+   * the HOME position
+   */
+  public enum ElevatorPositions {
     HOME(0),
     HUMAN_PLAYER_STATION(4),
     ONE(5),
     TWO(7),
     THREE(10),
     FOUR(15);
-    
-    double rotationUnits;
 
-    private ElevatorLevels(double rotationUnits){
-      this.rotationUnits = rotationUnits;
+    double mElevatorPosition;
+
+    private ElevatorPositions(double rotationUnits) {
+      mElevatorPosition = rotationUnits;
     }
 
-    public double getRotationUnits(){
-      return rotationUnits;
+    public double getRotationUnits() {
+      return mElevatorPosition;
     }
-
   }
-
-  public static class DIOValues {
-    public static final int ALGAELIMIT = 0;
-    public static final int ARMLIMIT = 0;
-    public static final int CLIMBERLIMIT = 4;
-    public static final int ELEVATORLIMIT = 2;
-    public static final int HANDLIMIT = 1;
-    public static final int HOPPERBEAM = 5;
-  }
-
-  // HOME is the MIN level of the elevator.
-  public static class ElevatorEncoderValues {
-    public static final double HOME = 0;
-    public static final double CORAL = 3;
-    public static final double ONE = 6;
-    public static final double TWO = 9;
-    public static final double THREE = 12;
-    public static final double FOUR = 15;
-    // public static final double MAX = 19;
-  }
-
-  public static class ElevatorMotors {
-    public static final int LEFT_ID = 14;
-    public static final int RIGHT_ID = 13;
-  }
-
 }

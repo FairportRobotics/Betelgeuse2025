@@ -4,9 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.Constants.ElevatorLevels;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.ArmConstants.ArmPositions;
+import frc.robot.Constants.ElevatorPositions;
+import frc.robot.Constants.ControllerIds;
+import frc.robot.Constants.ElevatorPositions;
+import frc.robot.Constants.ArmPositions;
 import frc.robot.commands.ArmGotoCommand;
 import frc.robot.commands.ClimberIn;
 import frc.robot.commands.ClimberOut;
@@ -55,10 +56,10 @@ public class RobotContainer {
       Commands.sequence(
           new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
           Commands.parallel(
-              new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorLevels.ONE),
+              new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE),
               new IntakeCommand(m_HandSubsystem)),
           Commands.parallel(
-              new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorLevels.TWO),
+              new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO),
               new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
 
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -68,8 +69,8 @@ public class RobotContainer {
   // Replace with CommandPS4Controller or CommandJoystick if needed
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  private final CommandXboxController driver = new CommandXboxController(0);
-  private final CommandXboxController operator = new CommandXboxController(1);
+  private final CommandXboxController driver = new CommandXboxController(ControllerIds.DRIVER_CONTROLLER_PORT);
+  private final CommandXboxController operator = new CommandXboxController(ControllerIds.OPERATOR_CONTROLLER_PORT);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -124,8 +125,8 @@ public class RobotContainer {
 
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-    driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorLevels.HOME));
-    driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorLevels.FOUR));
+    driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
+    driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
     driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
     driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
     driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));

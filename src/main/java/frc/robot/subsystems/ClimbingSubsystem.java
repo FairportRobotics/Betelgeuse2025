@@ -15,7 +15,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
-import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.ClimberPositions;
 import frc.robot.Constants.DIOValues;
 
@@ -31,9 +31,9 @@ public class ClimbingSubsystem extends TestableSubsystem {
   /** Creates a new ClimbingSubsystem. */
   public ClimbingSubsystem() {
     super("ClimbingSubsystem");
-    climbingMotor = new TalonFX(ArmConstants.CLIMBERMOTOR, "rio"); 
+    climbingMotor = new TalonFX(CanBusIds.CLIMBER_MOTOR_ID, "rio"); 
     climbingMotor.setNeutralMode(NeutralModeValue.Brake);
-    limitSwitch = new DigitalInput(DIOValues.CLIMBERLIMIT);
+    limitSwitch = new DigitalInput(DIOValues.CLIMBER_LIMIT_SWITCH);
     pos = ClimberPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();

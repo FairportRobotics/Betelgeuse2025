@@ -15,18 +15,18 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
-import frc.robot.Constants.ElevatorLevels;
+import frc.robot.Constants.ElevatorPositions;
 import frc.robot.commands.DefaultArmDownMoveElevatorToPlayerStation;
 
 public class ElevatorSubsystem extends TestableSubsystem {
-  private ElevatorLevels goToLevel = ElevatorLevels.HOME;
+  private ElevatorPositions goToPosition = ElevatorPositions.HOME;
 
   private double rightHomePos = Double.MAX_VALUE;
   private double leftHomePos = Double.MAX_VALUE;
 
-  private TalonFX elevatorLeftMotor = new TalonFX(Constants.ElevatorMotors.LEFT_ID);
-  private TalonFX elevatorRightMotor = new TalonFX(Constants.ElevatorMotors.RIGHT_ID);
-  private DigitalInput bottomlimitSwitch;
+  public TalonFX elevatorLeftMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_LEFT_MOTOR_ID);
+  public TalonFX elevatorRightMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_RIGHT_MOTOR_ID);
+  public DigitalInput bottomlimitSwitch;
 
   private StatusSignal<Angle> leftPos;
   private StatusSignal<Angle> rightPos;
@@ -41,7 +41,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
 
     // toplimitSwitch = new DigitalInput(8);
-    bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATORLIMIT);
+    bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
 
     TalonFXConfiguration elevatorMotor1Config = new TalonFXConfiguration();
     elevatorMotor1Config.Slot0.kP = 0.7;
@@ -115,38 +115,38 @@ public class ElevatorSubsystem extends TestableSubsystem {
   }
 
   /**
-   * Check for the level of elevator.
+   * Check for the position of elevator.
    * 
-   * @return true if the elevator is currently at the correct level or needs to
+   * @return true if the elevator is currently at the correct position or needs to
    *         stop for other reasons.
    */
-  public boolean isAtLevel() {
-    if (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmConstants.ArmPositions.DOWN)
+  public boolean isAtPosition() {
+    if (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmPositions.DOWN)
       return true;
-    if (goToLevel == ElevatorLevels.HOME)
+    if (goToPosition == ElevatorPositions.HOME)
       return bottomlimitSwitch.get();
     return Math.abs(leftError.refresh().getValue()) < 0.1 || Math.abs(rightError.refresh().getValue()) < 0.1;
   }
 
   /**
-   * Move the elevator to the desired level.
+   * Move the elevator to the desired position.
    * 
-   * @param setLevel The level to move the elevator to.
+   * @param setPosition The position to move the elevator to.
    */
-  public void moveElevator(ElevatorLevels setLevel) {
+  public void moveElevator(ElevatorPositions setPosition) {
     if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE
-        || (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmConstants.ArmPositions.DOWN))
+        || (getDefaultCommand() != null && armSubsystem.getArmPos() == Constants.ArmPositions.DOWN))
       return;
-    Objects.requireNonNull(setLevel, "level cannot be null");
-    goToLevel = setLevel;
+    Objects.requireNonNull(setPosition, "position cannot be null");
+    goToPosition = setPosition;
     elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
     elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
-    if (setLevel == ElevatorLevels.HOME) {
+    if (setPosition == ElevatorPositions.HOME) {
       elevatorLeftMotor.set(-0.1);
       elevatorRightMotor.set(-0.1);
     } else {
-      elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setLevel.getRotationUnits()));
-      elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setLevel.getRotationUnits()));
+      elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition.getRotationUnits()));
+      elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition.getRotationUnits()));
     }
   }
 
@@ -171,11 +171,11 @@ public class ElevatorSubsystem extends TestableSubsystem {
   }
 
   /**
-   * Get the level the elevator is currently at.
+   * Get the position the elevator is currently at.
    * 
-   * @return The level the elevator is currently at.
+   * @return The position the elevator is currently at.
    */
-  public ElevatorLevels getGoToLevel() {
-    return goToLevel;
+  public ElevatorPositions getGoToPosition() {
+    return goToPosition;
   }
 }
