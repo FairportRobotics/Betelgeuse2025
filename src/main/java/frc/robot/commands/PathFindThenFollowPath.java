@@ -11,7 +11,7 @@ import frc.robot.subsystems.HandSubsystem;
 
 public class PathFindThenFollowPath extends SequentialCommandGroup {
     /**
-     * Creates a new ExampleCommand.
+     * Creates a new PathFindThenFollowPath.
      *
      */
     public PathFindThenFollowPath() {

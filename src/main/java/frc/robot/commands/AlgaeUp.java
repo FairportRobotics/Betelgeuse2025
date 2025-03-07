@@ -7,13 +7,13 @@ package frc.robot.commands;
 import frc.robot.subsystems.AlgaeSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** An AlgaeUp command that uses the Algae subsystem. */
 public class AlgaeUp extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final AlgaeSubsystem a_subsystem;
 
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new AlgaeUp.
    *
    * @param subsystem The subsystem used by this command.
    */
