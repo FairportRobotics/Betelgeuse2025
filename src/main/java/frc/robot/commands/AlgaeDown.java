@@ -11,14 +11,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** An AlgaeDown command that uses the Algae subsystem. */
 public class AlgaeDown extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final AlgaeSubsystem a_subsystem;
   private StatusSignal<Double> posError;
   private StatusSignal<Angle> pos;
   /**
-   * Creates a new ExampleCommand.
+   * Creates a new AlgaeDown.
    *
    * @param subsystem The subsystem used by this command.
    */

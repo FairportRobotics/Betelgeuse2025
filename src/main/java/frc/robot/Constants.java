@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean
@@ -117,6 +119,32 @@ public final class Constants {
     public double getRotationUnits() {
       return mElevatorPosition;
     }
+  }
 
-}
+
+    public enum DriveWaypoints {
+        REEF_A("A"),
+        REEF_B("B"),
+        REEF_C("C"),
+        REEF_D("D"),
+        REEF_E("E"),
+        REEF_F("F"),
+        REEF_G("G"),
+        REEF_H("H"),
+        REEF_I("I"),
+        REEF_J("J"),
+        REEF_K("K"),
+        REEF_L("L"),
+
+        HPS_LEFT("LeftPS"),
+        HPS_RIGHT("RightPS");
+
+        public String pathName;
+
+        private DriveWaypoints( String pathName ){
+            this.pathName = pathName;
+        }
+    }
+
+
 }

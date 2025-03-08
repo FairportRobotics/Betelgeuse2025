@@ -42,19 +42,20 @@ public class ElevatorGoToLevelCommand extends Command {
         leftPositionRequest = new PositionVoltage(0).withSlot(0);
     }
 
-    // public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, double pos) {
-    //     _elevatorSubsystem = elevatorSubsystem;
-    //     addRequirements(_elevatorSubsystem);
-    //     requestPosRots = pos;
+    // public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, double
+    // pos) {
+    // _elevatorSubsystem = elevatorSubsystem;
+    // addRequirements(_elevatorSubsystem);
+    // requestPosRots = pos;
 
-    //     rightPosition = _elevatorSubsystem.elevatorRightMotor.getPosition();
-    //     leftPosition = _elevatorSubsystem.elevatorLeftMotor.getPosition();
+    // rightPosition = _elevatorSubsystem.elevatorRightMotor.getPosition();
+    // leftPosition = _elevatorSubsystem.elevatorLeftMotor.getPosition();
 
-    //     leftPosError = _elevatorSubsystem.elevatorLeftMotor.getClosedLoopError();
-    //     rightPosError = _elevatorSubsystem.elevatorRightMotor.getClosedLoopError();
+    // leftPosError = _elevatorSubsystem.elevatorLeftMotor.getClosedLoopError();
+    // rightPosError = _elevatorSubsystem.elevatorRightMotor.getClosedLoopError();
 
-    //     rightPositionRequest = new PositionVoltage(0).withSlot(0);
-    //     leftPositionRequest = new PositionVoltage(0).withSlot(0);
+    // rightPositionRequest = new PositionVoltage(0).withSlot(0);
+    // leftPositionRequest = new PositionVoltage(0).withSlot(0);
     // }
 
     @Override
@@ -62,12 +63,12 @@ public class ElevatorGoToLevelCommand extends Command {
         _elevatorSubsystem.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
         _elevatorSubsystem.elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        if (_elevatorSubsystem.canGoToPosition(requestedPos)){
-        _elevatorSubsystem.elevatorLeftMotor
-                .setControl(leftPositionRequest.withPosition(_elevatorSubsystem.leftHomePos + requestPosRots));
-        _elevatorSubsystem.elevatorRightMotor
-                .setControl(rightPositionRequest.withPosition(_elevatorSubsystem.rightHomePos + requestPosRots));
-        }   
+        if (_elevatorSubsystem.canGoToPosition(requestedPos)) {
+            _elevatorSubsystem.elevatorLeftMotor
+                    .setControl(leftPositionRequest.withPosition(_elevatorSubsystem.leftHomePos + requestPosRots));
+            _elevatorSubsystem.elevatorRightMotor
+                    .setControl(rightPositionRequest.withPosition(_elevatorSubsystem.rightHomePos + requestPosRots));
+        }
     }
 
     @Override
@@ -87,8 +88,10 @@ public class ElevatorGoToLevelCommand extends Command {
             SmartDashboard.putNumber("Ele Left Pos", leftPosition.getValueAsDouble());
             SmartDashboard.putNumber("Ele Right", rightPosition.getValueAsDouble());
 
-            return (Math.abs(leftPosition.getValueAsDouble() - (requestPosRots + _elevatorSubsystem.leftHomePos)) <= 0.1 ||
-                    Math.abs(rightPosition.getValueAsDouble() - (requestPosRots + _elevatorSubsystem.rightHomePos)) <= 0.1);
+            return (Math.abs(leftPosition.getValueAsDouble() - (requestPosRots + _elevatorSubsystem.leftHomePos)) <= 0.1
+                    ||
+                    Math.abs(rightPosition.getValueAsDouble()
+                            - (requestPosRots + _elevatorSubsystem.rightHomePos)) <= 0.1);
         }
 
         return false;

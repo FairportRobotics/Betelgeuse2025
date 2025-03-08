@@ -12,32 +12,26 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
-/** An example command that uses an example subsystem. */
+/** An ArmUpCommand that uses an example subsystem. */
 public class ArmUpCommand extends Command {
   @SuppressWarnings({ "PMD.UnusedPrivateField", "PMD.SingularField" })
   private final ArmSubsystem m_subsystem;
   private ArmPositions pos;
   private StatusSignal<Angle> currentPos;
-
   private StatusSignal<Double> posError;
 
-
   /**
-   * Creates a new ArmDownCommand.
-   * ArmDownCommand brings the arm down 1 position if the current position is not
-   * less than or equal to the DOWN positon
+   * Creates a new ArmUpCommand.
+   * ArmDownCommand brings the arm up 1 position if the current position is not
+   * less than or equal to the UP positon
    * 
-   * @param subsystem The ArmSubsystem. You know... the thing... that does... the
-   *                  thing...
+   * @param subsystem The ArmSubsystem.
    */
   public ArmUpCommand(ArmSubsystem subsystem) {
     m_subsystem = subsystem;
     System.out.println(m_subsystem.getArmPos());
-
     currentPos = m_subsystem.getActualPos();
-
     posError = m_subsystem.getError();
-
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -49,7 +43,6 @@ public class ArmUpCommand extends Command {
     pos = m_subsystem.getArmPos();
     System.out.println("pos was " + pos);
 
-
     if (pos.ordinal() > ArmPositions.UP.ordinal()) {
       pos = ArmPositions.values()[pos.ordinal() - 1];
     }
@@ -60,7 +53,6 @@ public class ArmUpCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
   }
 
   // Called once the command ends or is interrupted.
@@ -72,20 +64,20 @@ public class ArmUpCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-      posError.refresh();
-      currentPos.refresh();
+    posError.refresh();
+    currentPos.refresh();
 
-        //if (pos == ArmPositions.UP) {
-        //    return !m_subsystem.limitSwitch.get();
-        //} 
-        /*else /* */ if (currentPos.hasUpdated()) {
-            System.out.println("currentPos updated :D");
-            SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
-            System.out.println(currentPos.getValueAsDouble());
-            System.out.println(Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )));
-            return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
-        }
+    // if (pos == ArmPositions.UP) {
+    // return !m_subsystem.limitSwitch.get();
+    // }
+    /* else /* */ if (currentPos.hasUpdated()) {
+      System.out.println("currentPos updated :D");
+      SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
+      System.out.println(currentPos.getValueAsDouble());
+      System.out.println(Math.abs(currentPos.getValueAsDouble() - (pos.getValue())));
+      return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue())) <= 0.1);
+    }
 
-        return false;
+    return false;
   }
 }
