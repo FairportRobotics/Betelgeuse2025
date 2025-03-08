@@ -78,8 +78,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         registerPOSTTest("Right Motor Connected", () -> {
             return elevatorRightMotor.isConnected();
         });
-        // setDefaultCommand(new DefaultArmDownMoveElevatorToPlayerStation(this,
-        // armSubsystem));
+        setDefaultCommand(new DefaultArmDownMoveElevatorToPlayerStation(this, armSubsystem));
     }
 
     @Override
