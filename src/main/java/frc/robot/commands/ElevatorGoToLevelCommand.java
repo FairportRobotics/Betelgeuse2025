@@ -28,8 +28,7 @@ public class ElevatorGoToLevelCommand extends Command {
 
     @Override
     public void execute() {
-        if (elevatorSubsystem.canGoToPosition(position))
-            elevatorSubsystem.moveElevator(position);
+        elevatorSubsystem.moveElevator(position);
     }
 
     @Override
