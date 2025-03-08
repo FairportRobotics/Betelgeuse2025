@@ -47,6 +47,10 @@ public class ArmSubsystem extends TestableSubsystem {
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
+
+    registerPOSTTest("Arm Motor Connected", () -> {
+            return armYMotor.isConnected();
+    });
   }
 
   @Override
