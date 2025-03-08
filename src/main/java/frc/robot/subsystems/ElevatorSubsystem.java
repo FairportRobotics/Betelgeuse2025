@@ -102,11 +102,11 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 rightHomePos = rightPos.getValueAsDouble();
             }
 
-            if (armSubsystem.getActualPos().getValueAsDouble() > ArmPositions.MIDDLE.getValue()) {
-                lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
-            }
         }
-
+        if (armSubsystem.getActualPos().refresh().getValueAsDouble() > ArmPositions.MIDDLE.getValue())
+            lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
+        else
+            lowestValidElevatorPosition = 0;
         Logger.recordOutput("Elevator At Bottom", !bottomlimitSwitch.get());
 
         Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValue());
