@@ -6,33 +6,34 @@ package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
 
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DIOValues;
-import frc.robot.Constants.ElevatorPositions;
-import frc.robot.commands.ElevatorGoToLevelCommand;
-import frc.robot.subsystems.ElevatorSubsystem;
 
 public class HopperSubsystem extends TestableSubsystem {
   private DigitalInput beamBreak;
   private Command m_autoIntakeCommand;
 
-  /** Creates a new ExampleSubsystem. */
+  Alert alert = new Alert("Hopper beam is broken.", AlertType.kInfo);
+
   public HopperSubsystem(Command p_autoIntakeCommand) {
     super("HopperSubsystem");
     beamBreak = new DigitalInput(DIOValues.HOPPER_BEAM_BREAK_SENSOR);
     m_autoIntakeCommand = p_autoIntakeCommand;
+
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    /* 
+    // This method will be called once per scheduler run    
+ 
+    alert.set(beamBreak.get());
+
     if (!beamBreak.get() && !m_autoIntakeCommand.isScheduled()) {
-      m_autoIntakeCommand.schedule();
+      //m_autoIntakeCommand.schedule();
     }
-      */
   }
 
   @Override
