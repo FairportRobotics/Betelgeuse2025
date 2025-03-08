@@ -62,11 +62,12 @@ public class ElevatorGoToLevelCommand extends Command {
         _elevatorSubsystem.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
         _elevatorSubsystem.elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        if (_elevatorSubsystem.canGoToPosition(requestedPos))
+        if (_elevatorSubsystem.canGoToPosition(requestedPos)){
         _elevatorSubsystem.elevatorLeftMotor
                 .setControl(leftPositionRequest.withPosition(_elevatorSubsystem.leftHomePos + requestPosRots));
         _elevatorSubsystem.elevatorRightMotor
                 .setControl(rightPositionRequest.withPosition(_elevatorSubsystem.rightHomePos + requestPosRots));
+        }   
     }
 
     @Override

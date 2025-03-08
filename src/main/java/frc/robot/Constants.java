@@ -117,5 +117,6 @@ public final class Constants {
     public double getRotationUnits() {
       return mElevatorPosition;
     }
-  }
+
+}
 }

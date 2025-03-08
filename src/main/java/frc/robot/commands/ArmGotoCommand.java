@@ -7,6 +7,8 @@ package frc.robot.commands;
 
 import frc.robot.Constants.ArmPositions;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import edu.wpi.first.units.measure.Angle;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 /** An example command that uses an example subsystem. */
 public class ArmGotoCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private ArmSubsystem _armSubsystem;
   private final ArmSubsystem m_subsystem;
   private ArmPositions pos;
   private StatusSignal<Angle> currentPos;
@@ -45,7 +48,9 @@ public class ArmGotoCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (_armSubsystem.canGoToPosition(pos)){
     m_subsystem.setTargetPos(pos);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
