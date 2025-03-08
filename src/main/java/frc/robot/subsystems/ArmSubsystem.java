@@ -60,7 +60,7 @@ public class ArmSubsystem extends TestableSubsystem {
     // This method will be called once per scheduler run
     if (armHomePos == Double.MAX_VALUE) {
 
-      this.armYMotor.set(0.1);
+      this.armYMotor.set(-.1);
       if (getSwitch()) {
         this.armYMotor.set(0.0);
         
