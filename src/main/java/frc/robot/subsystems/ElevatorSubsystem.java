@@ -113,8 +113,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValue());
     }
 
-    public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        return requestedPos.getRotationUnits() > lowestValidElevatorPosition;
+    private boolean canGoToPosition(ElevatorPositions requestedPosition) {
+        return requestedPosition.getRotationUnits() > lowestValidElevatorPosition;
     }
 
     /**
@@ -129,7 +129,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
             return true;
         if (goToPosition == ElevatorPositions.HOME)
             return bottomlimitSwitch.get();
-        return Math.abs(leftError.refresh().getValue()) < 0.1 || Math.abs(rightError.refresh().getValue()) < 0.1;
+        return Math.abs(leftError.refresh().getValueAsDouble()) < 0.1
+                || Math.abs(rightError.refresh().getValueAsDouble()) < 0.1;
     }
 
     /**
@@ -139,17 +140,17 @@ public class ElevatorSubsystem extends TestableSubsystem {
      */
     public void moveElevator(ElevatorPositions setPosition) {
         if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE
-                || (getDefaultCommand() instanceof DefaultArmDownMoveElevatorToPlayerStation
-                        && armSubsystem.getArmPos() == Constants.ArmPositions.DOWN))
+                || goToPosition == Objects.requireNonNull(setPosition, "position cannot be null"))
             return;
-        Objects.requireNonNull(setPosition, "position cannot be null");
         goToPosition = setPosition;
-        if (setPosition == ElevatorPositions.HOME) {
+        if (!canGoToPosition(setPosition))
+            goToPosition = ElevatorPositions.ARM_LIMIT;
+        if (goToPosition == ElevatorPositions.HOME) {
             elevatorLeftMotor.set(-0.1);
             elevatorRightMotor.set(-0.1);
         } else {
-            elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition.getRotationUnits()));
-            elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition.getRotationUnits()));
+            elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + goToPosition.getRotationUnits()));
+            elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + goToPosition.getRotationUnits()));
         }
     }
 
