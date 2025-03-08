@@ -47,7 +47,7 @@ public class RobotContainer {
 
   // private final Telemetry logger = new Telemetry(MaxSpeed);
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem(m_armSubsystem);
+  private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
   private final ClimbingSubsystem m_ClimbingSubsystem = new ClimbingSubsystem();
   private final HandSubsystem m_HandSubsystem = new HandSubsystem();
   private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(
@@ -75,6 +75,7 @@ public class RobotContainer {
    */
 
   public RobotContainer() {
+    m_elevatorSubsystem.setArmSubsystem(m_armSubsystem);
     NamedCommands.registerCommand("Shoot", new OutakeCommand(m_HandSubsystem));
     configureBindings();
   }
@@ -118,8 +119,6 @@ public class RobotContainer {
     driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    
-
     // reset the field-centric heading on left bumper press
     driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
@@ -133,8 +132,8 @@ public class RobotContainer {
     // Test commands for testing :)
     // driver.a().onTrue();
 
-    //driver.povUp().onTrue(new ElevatorUpCommand(m_ElevatorSubsystem));
-    //driver.povDown().onTrue(new ElevatorDownCommand(m_ElevatorSubsystem));
+    // driver.povUp().onTrue(new ElevatorUpCommand(m_ElevatorSubsystem));
+    // driver.povDown().onTrue(new ElevatorDownCommand(m_ElevatorSubsystem));
   }
 
   public Command getAutonomousCommand() {

@@ -39,10 +39,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     private double lowestValidElevatorPosition = ElevatorPositions.HOME.getRotationUnits();
 
-    public ElevatorSubsystem(ArmSubsystem armSubsystem) {
+    public ElevatorSubsystem() {
         super("ElevatorSubsystem");
-        Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
-        this.armSubsystem = armSubsystem;
 
         // toplimitSwitch = new DigitalInput(8);
         bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
@@ -80,7 +78,6 @@ public class ElevatorSubsystem extends TestableSubsystem {
         registerPOSTTest("Right Motor Connected", () -> {
             return elevatorRightMotor.isConnected();
         });
-        setDefaultCommand(new DefaultArmDownMoveElevatorToPlayerStation(this, armSubsystem));
     }
 
     @Override
@@ -175,5 +172,14 @@ public class ElevatorSubsystem extends TestableSubsystem {
      */
     public ElevatorPositions getGoToPosition() {
         return goToPosition;
+    }
+
+    /**
+     * Set the arm subsystem.
+     * 
+     * @param armSubsystem is the armSubsystem to be set.
+     */
+    public void setArmSubsystem(ArmSubsystem armSubsystem) {
+        this.armSubsystem = Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
     }
 }
