@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import org.fairportrobotics.frc.posty.TestableSubsystem;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -25,6 +26,10 @@ public class HopperSubsystem extends TestableSubsystem {
 
   }
 
+  public boolean isCoralInHopper(){
+    return beamBreak.get();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run    
@@ -34,6 +39,9 @@ public class HopperSubsystem extends TestableSubsystem {
     if (!beamBreak.get() && !m_autoIntakeCommand.isScheduled()) {
       //m_autoIntakeCommand.schedule();
     }
+
+    Logger.recordOutput("Coral in hopper", isCoralInHopper());
+
   }
 
   @Override

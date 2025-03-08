@@ -1,13 +1,12 @@
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-
 import org.fairportrobotics.frc.posty.TestableSubsystem;
+import org.littletonrobotics.junction.Logger;
 
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.DIOValues; 
 
@@ -18,15 +17,13 @@ public class HandSubsystem extends TestableSubsystem {
   private SparkMax handMotor = new SparkMax(Constants.CanBusIds.HAND_MOTOR_ID, MotorType.kBrushless);
   private DigitalInput handLimitSwitch = new DigitalInput(DIOValues.HAND_LIMIT_SWITCH);
   // public SparkClosedLoopController m_controller = handMotor.getClosedLoopController();
-  private boolean hazPiece;
-  /** Creates a new ExampleSubsystem. */
   public HandSubsystem() {
     super("HandSubsystem");
 
     registerPOSTTest("Motor is connected", () -> handMotor.getBusVoltage() > 0);
   }
 
-  public Boolean getSwitch()
+  public Boolean isCoralInHand()
   {
     return handLimitSwitch.get();
   }
@@ -43,6 +40,8 @@ public class HandSubsystem extends TestableSubsystem {
   public void periodic() {
     // This method will be called once per scheduler run
     
+    Logger.recordOutput("Coral in hand", isCoralInHand());
+
   }
   
 

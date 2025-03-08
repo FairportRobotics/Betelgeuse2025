@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class ArmGotoCommand extends Command {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private ArmSubsystem _armSubsystem;
-  private final ArmSubsystem m_subsystem;
   private ArmPositions pos;
   private StatusSignal<Angle> currentPos;
 
@@ -34,10 +33,10 @@ public class ArmGotoCommand extends Command {
    */
   public ArmGotoCommand(ArmSubsystem subsystem, ArmPositions newPos) {
     
-    m_subsystem = subsystem;
+    _armSubsystem = subsystem;
     pos = newPos;
-    posError = m_subsystem.getError();
-    currentPos = m_subsystem.getActualPos();
+    posError = _armSubsystem.getError();
+    currentPos = _armSubsystem.getActualPos();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -46,9 +45,7 @@ public class ArmGotoCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (_armSubsystem.canGoToPosition(pos)){
-    m_subsystem.setTargetPos(pos);
-    }
+    _armSubsystem.setTargetPos(pos);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -66,8 +63,8 @@ public class ArmGotoCommand extends Command {
     currentPos.refresh();
     boolean retVal = false;
 
-        if (pos == ArmPositions.UP) {
-            retVal = m_subsystem.getSwitch();
+        if (pos == ArmPositions.STOWED) {
+            retVal = _armSubsystem.getSwitch();
         } 
         else if (currentPos.hasUpdated()) {
 

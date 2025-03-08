@@ -82,7 +82,7 @@ public class ElevatorGoToLevelCommand extends Command {
         rightPosError.refresh();
 
         if (requestPosRots <= 0) {
-            return !_elevatorSubsystem.bottomlimitSwitch.get();
+            return _elevatorSubsystem.isAtBottom();
         } else if (leftPosition.hasUpdated() && rightPosition.hasUpdated()) {
 
             SmartDashboard.putNumber("Ele Left Pos", leftPosition.getValueAsDouble());

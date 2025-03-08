@@ -17,15 +17,20 @@ import frc.robot.Constants.ElevatorPositions;
 
 public class ElevatorSubsystem extends TestableSubsystem {
 
-    public double rightHomePos = Double.MAX_VALUE;
-    public double leftHomePos = Double.MAX_VALUE;
+    private final double DEFAULT_HOME_POS = 0.00001;
+
+    public double rightHomePos = DEFAULT_HOME_POS;
+    public double leftHomePos = DEFAULT_HOME_POS;
 
     public TalonFX elevatorLeftMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_LEFT_MOTOR_ID);
     public TalonFX elevatorRightMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_RIGHT_MOTOR_ID);
-    public DigitalInput bottomlimitSwitch;
+    private DigitalInput bottomlimitSwitch;
 
     private StatusSignal<Angle> leftPos;
     private StatusSignal<Angle> rightPos;
+
+    private StatusSignal<Angle> leftRequestedPos;
+    private StatusSignal<Angle> rightRequestedPos;
 
     private ArmSubsystem armSubsystem;
 
@@ -38,17 +43,20 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         this.armSubsystem.setElevatorSubsystem(this);
 
-        // toplimitSwitch = new DigitalInput(8);
         bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
 
         TalonFXConfiguration elevatorMotor1Config = new TalonFXConfiguration();
         elevatorMotor1Config.Slot0.kP = 0.7;
         elevatorMotor1Config.Slot0.kI = 0.5;
         elevatorMotor1Config.Slot0.kD = 0.1;
-        elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        //elevatorMotor1Config.MotorOutput.PeakForwardDutyCycle = 0.25;
+        //elevatorMotor1Config.MotorOutput.PeakReverseDutyCycle = 0.25;
         elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
         leftPos = elevatorLeftMotor.getPosition();
         leftPos.setUpdateFrequency(50);
+
+
         elevatorLeftMotor.optimizeBusUtilization();
         // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -56,7 +64,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kP = 0.7;
         elevatorMotor2Config.Slot0.kI = 0.5;
         elevatorMotor2Config.Slot0.kD = 0.1;
-        elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        //elevatorMotor2Config.MotorOutput.PeakForwardDutyCycle = 0.25;
+        //elevatorMotor2Config.MotorOutput.PeakReverseDutyCycle = 0.25;
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
         rightPos = elevatorRightMotor.getPosition();
         rightPos.setUpdateFrequency(50);
@@ -75,12 +85,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     @Override
     public void periodic() {
-        if (leftHomePos == Double.MAX_VALUE || rightHomePos == Double.MAX_VALUE) {
+        if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS) {
 
-            this.elevatorLeftMotor.set(-0.1);
-            this.elevatorRightMotor.set(-0.1);
-
-            if (!this.bottomlimitSwitch.get()) {
+            if (isAtBottom()) {
                 this.elevatorLeftMotor.set(0.0);
                 this.elevatorRightMotor.set(0.0);
 
@@ -95,17 +102,27 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
                 this.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
                 this.elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+                return;
             }
 
-            if (armSubsystem.getActualPos().getValueAsDouble() > ArmPositions.MIDDLE.getValue()) {
-                lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
-            }
+
+            this.elevatorLeftMotor.set(-0.1);
+            this.elevatorRightMotor.set(-0.1);
+
         }
 
-        Logger.recordOutput("Elevator At Bottom", !bottomlimitSwitch.get());
+        if (armSubsystem.getActualPos().getValueAsDouble() > ArmPositions.MIDDLE.getValue()) {
+            lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
+        }
+
+        Logger.recordOutput("Elevator At Bottom", isAtBottom());
 
         Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
         Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble()-rightHomePos);
+    }
+
+    public boolean isAtBottom(){
+      return bottomlimitSwitch.get();
     }
 
     public boolean canGoToPosition(ElevatorPositions requestedPos) {

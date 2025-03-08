@@ -67,8 +67,12 @@ public class ClimbingSubsystem extends TestableSubsystem {
         error.setUpdateFrequency(10);
       }
     }
-    Logger.recordOutput("Arm at Home ", limitSwitch.get());
     */
+    Logger.recordOutput("Climber at home", isAtHome());
+  }
+
+  public boolean isAtHome(){
+    return limitSwitch.get();
   }
 
   /**

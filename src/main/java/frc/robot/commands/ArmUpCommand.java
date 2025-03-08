@@ -43,7 +43,7 @@ public class ArmUpCommand extends Command {
     pos = m_subsystem.getArmPos();
     System.out.println("pos was " + pos);
 
-    if (pos.ordinal() > ArmPositions.UP.ordinal()) {
+    if (pos.ordinal() > ArmPositions.STOWED.ordinal()) {
       pos = ArmPositions.values()[pos.ordinal() - 1];
     }
     m_subsystem.setTargetPos(pos);

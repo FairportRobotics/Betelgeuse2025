@@ -192,7 +192,9 @@ public class RobotContainer {
         driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
         driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
-        driver.a().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
+
+
+        driver.a().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME));
         driver.b().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);

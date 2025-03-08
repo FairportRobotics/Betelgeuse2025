@@ -23,10 +23,12 @@ import frc.robot.Constants.ElevatorPositions;
 
 public class ArmSubsystem extends TestableSubsystem {
 
+  private final double DEFAULT_HOME_POS = 0.00001;
+  public double armHomePos = DEFAULT_HOME_POS;
+
   private TalonFX armYMotor;
   private DigitalInput topSwitch; //Today on TopSwitch...
   private StatusSignal<Angle> actualPos;
-  public double armHomePos = Double.MAX_VALUE;
   private ArmPositions targetPos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
@@ -35,7 +37,7 @@ public class ArmSubsystem extends TestableSubsystem {
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     super("ArmSubsystem");
-    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio"); // TODO: FIX ID
+    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio");
     armYMotor.setNeutralMode(NeutralModeValue.Brake);
     topSwitch = new DigitalInput(DIOValues.ARM_LIMIT_SWITCH);
     targetPos = ArmPositions.NONE;
@@ -58,9 +60,8 @@ public class ArmSubsystem extends TestableSubsystem {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (armHomePos == Double.MAX_VALUE) {
+    if (armHomePos == DEFAULT_HOME_POS) {
 
-      this.armYMotor.set(-.1);
       if (getSwitch()) {
         this.armYMotor.set(0.0);
         
@@ -71,11 +72,13 @@ public class ArmSubsystem extends TestableSubsystem {
         armHomePos = actualPos.getValueAsDouble();
 
         this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
+        return;
       }
+      this.armYMotor.set(-.1);
     }
     Logger.recordOutput("Arm at Home ", getSwitch());
 
-    Logger.recordOutput("Arm Pos", actualPos.getValueAsDouble()-armHomePos);
+    Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
     
   }
 
@@ -151,8 +154,6 @@ public class ArmSubsystem extends TestableSubsystem {
         return true;
     else    
         return false;
-}
-
-
+  }
 
 }
