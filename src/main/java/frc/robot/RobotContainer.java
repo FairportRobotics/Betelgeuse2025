@@ -12,13 +12,11 @@ import frc.robot.commands.ArmGotoCommand;
 import frc.robot.commands.ClimberIn;
 import frc.robot.commands.ClimberOut;
 import frc.robot.commands.ElevatorGoToLevelCommand;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.HandCommand;
 import frc.robot.commands.IntakeCommand;
 import frc.robot.commands.OutakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbingSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.HandSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 
@@ -96,7 +94,6 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
 
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

@@ -102,6 +102,7 @@ public final class Constants {
   public enum ElevatorPositions {
     HOME(0),
     HUMAN_PLAYER_STATION(4),
+    ARM_LIMIT(4),  // lowest elevator position with arm down
     ONE(5),
     TWO(7),
     THREE(10),

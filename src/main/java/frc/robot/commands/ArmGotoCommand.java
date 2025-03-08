@@ -23,10 +23,10 @@ public class ArmGotoCommand extends Command {
   private StatusSignal<Double> posError;
 
   /**
-   * Creates a new SetArmPosCommand.
+   * Creates a new ArmGotoCommand.
    * This command sets the arm positon to the passed in position.
    * 
-   * @param subsystem The ArmSubsystem. This is needed. Because. Just because.
+   * @param subsystem The ArmSubsystem. 
    * @param newPos The requested position of the arm. You can find what diffrent positions there are in Constants.java
    */
   public ArmGotoCommand(ArmSubsystem subsystem, ArmPositions newPos) {
@@ -35,8 +35,6 @@ public class ArmGotoCommand extends Command {
     pos = newPos;
     posError = m_subsystem.getError();
     currentPos = m_subsystem.getActualPos();
-
-
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -61,17 +59,18 @@ public class ArmGotoCommand extends Command {
   public boolean isFinished() {
     posError.refresh();
     currentPos.refresh();
+    boolean retVal = false;
 
         if (pos == ArmPositions.UP) {
-            return m_subsystem.getSwitch();
+            retVal = m_subsystem.getSwitch();
         } 
         else if (currentPos.hasUpdated()) {
 
             SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
 
-            return (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
+            retVal = (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
         }
 
-        return false;
+        return retVal;
   }
 }

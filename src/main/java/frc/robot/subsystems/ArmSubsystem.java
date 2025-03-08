@@ -28,6 +28,7 @@ public class ArmSubsystem extends TestableSubsystem {
   public double armHomePos = Double.MAX_VALUE;
   private ArmPositions targetPos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
+  private ElevatorSubsystem mElevatorSubsystem;
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -46,7 +47,6 @@ public class ArmSubsystem extends TestableSubsystem {
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
-    
   }
 
   @Override
@@ -85,7 +85,7 @@ public class ArmSubsystem extends TestableSubsystem {
   /**
    * Get the value of the current position of the motor.
    *
-   * @return The current position of the motor. I literally just said it.
+   * @return The current position of the motor.
    */
   public StatusSignal<Angle> getActualPos() {
     return actualPos;
@@ -103,19 +103,7 @@ public class ArmSubsystem extends TestableSubsystem {
   /**
    * The value of the limitswitch
    *
-   * @return True when switch is triggered, False when not. It originally did the
-   *         opposite and it's so stupid. You would think naturally not triggered
-   *         would be false, but NOOOOO. That was just too much to ask for from
-   *         our limit switch. It just thinks it's so SMART by mixing us up. When
-   *         Nanson was working on the elevator code, he spend a good few minuets
-   *         trying to figure out why the homing code would not work. When he
-   *         figured out that the limit switches were returning false, he did a
-   *         backflip so large, he made it to the moon. It took us 13.4 Billion
-   *         dollars to get him back(shout out to our sponsors) and once we did,
-   *         he told us all about how aliens were making a colony there and how it
-   *         was made of cheese and how the limit switch returned false when not
-   *         triggered. We couldn't believe our ears(mostly because of the moon
-   *         stuff).
+   * @return True when switch is triggered, False when not. 
    */
   public boolean getSwitch() {
     return topSwitch.get();
@@ -144,6 +132,10 @@ public class ArmSubsystem extends TestableSubsystem {
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
 
+  }
+
+  public void setElevatorSubsystem(ElevatorSubsystem theElevatorSubsytem){
+    mElevatorSubsystem = theElevatorSubsytem;
   }
 
 }
