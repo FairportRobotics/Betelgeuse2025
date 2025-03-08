@@ -104,8 +104,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator At Bottom", !bottomlimitSwitch.get());
 
-        Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValue());
-        Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValue());
+        Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
+        Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble()-rightHomePos);
     }
 
     public boolean canGoToPosition(ElevatorPositions requestedPos) {

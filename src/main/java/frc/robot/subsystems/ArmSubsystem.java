@@ -73,7 +73,9 @@ public class ArmSubsystem extends TestableSubsystem {
         this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
       }
     }
-    Logger.recordOutput("Arm at Home ", !topSwitch.get());
+    Logger.recordOutput("Arm at Home ", getSwitch());
+
+    Logger.recordOutput("Arm Pos", actualPos.getValueAsDouble()-armHomePos);
     
   }
 

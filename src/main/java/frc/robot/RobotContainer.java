@@ -193,8 +193,8 @@ public class RobotContainer {
         driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
         driver.a().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
-
-        driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
+        driver.b().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
+        //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
         // Test commands for testing :)

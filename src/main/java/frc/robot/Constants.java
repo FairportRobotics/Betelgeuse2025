@@ -78,8 +78,8 @@ public final class Constants {
    */
   public enum ArmPositions {
     UP(0),
-    MIDDLE(.25),
-    DOWN(.5),
+    MIDDLE(15),
+    DOWN(30),
     NONE(0);
 
     double mArmPosition;
