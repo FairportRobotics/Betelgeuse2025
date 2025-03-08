@@ -54,8 +54,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
         leftPos = elevatorLeftMotor.getPosition();
+        leftPos.setUpdateFrequency(0);
         leftError = elevatorLeftMotor.getClosedLoopError();
-        leftPos.setUpdateFrequency(50);
+        leftError.setUpdateFrequency(0);
         elevatorLeftMotor.optimizeBusUtilization();
         elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -66,8 +67,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
         rightPos = elevatorRightMotor.getPosition();
+        rightPos.setUpdateFrequency(0);
         rightError = elevatorRightMotor.getClosedLoopError();
-        rightPos.setUpdateFrequency(50);
+        rightError.setUpdateFrequency(0);
         elevatorRightMotor.optimizeBusUtilization();
         elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -92,14 +94,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 this.elevatorLeftMotor.set(0.0);
                 this.elevatorRightMotor.set(0.0);
 
-                StatusSignal<Angle> leftPos = elevatorLeftMotor.getPosition();
-                StatusSignal<Angle> rightPos = elevatorRightMotor.getPosition();
-
-                leftPos.waitForUpdate(1.0);
-                rightPos.waitForUpdate(1.0);
-
-                leftHomePos = leftPos.getValueAsDouble();
-                rightHomePos = rightPos.getValueAsDouble();
+                leftHomePos = leftPos.refresh().getValueAsDouble();
+                rightHomePos = rightPos.refresh().getValueAsDouble();
             }
 
         }
