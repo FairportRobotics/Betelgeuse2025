@@ -50,8 +50,10 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.Slot0.kI = 0.5;
         elevatorMotor1Config.Slot0.kD = 0.1;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        //elevatorMotor1Config.MotorOutput.PeakForwardDutyCycle = 0.25;
-        //elevatorMotor1Config.MotorOutput.PeakReverseDutyCycle = 0.25;
+
+        elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 50;
+        elevatorMotor1Config.CurrentLimits.StatorCurrentLimitEnable = true;
+
         elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
         leftPos = elevatorLeftMotor.getPosition();
         leftPos.setUpdateFrequency(50);
@@ -65,8 +67,10 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kI = 0.5;
         elevatorMotor2Config.Slot0.kD = 0.1;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        //elevatorMotor2Config.MotorOutput.PeakForwardDutyCycle = 0.25;
-        //elevatorMotor2Config.MotorOutput.PeakReverseDutyCycle = 0.25;
+
+        elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 50;
+        elevatorMotor2Config.CurrentLimits.StatorCurrentLimitEnable = true;
+
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
         rightPos = elevatorRightMotor.getPosition();
         rightPos.setUpdateFrequency(50);

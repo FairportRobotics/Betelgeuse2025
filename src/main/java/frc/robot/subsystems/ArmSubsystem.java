@@ -47,6 +47,8 @@ public class ArmSubsystem extends TestableSubsystem {
     armYConfig.Slot0.kI = 0.5;
     armYConfig.Slot0.kD = 0.3;
     armYConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    armYConfig.CurrentLimits.StatorCurrentLimit = 30;
+    armYConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     armYMotor.getConfigurator().apply(armYConfig);
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
@@ -64,7 +66,7 @@ public class ArmSubsystem extends TestableSubsystem {
 
       if (getSwitch()) {
         this.armYMotor.set(0.0);
-        
+
         StatusSignal<Angle> pos = armYMotor.getPosition();
 
         actualPos.waitForUpdate(1.0);
@@ -79,7 +81,7 @@ public class ArmSubsystem extends TestableSubsystem {
     Logger.recordOutput("Arm at Home ", getSwitch());
 
     Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
-    
+
   }
 
   /**
@@ -152,7 +154,7 @@ public class ArmSubsystem extends TestableSubsystem {
   public boolean canGoToPosition(ArmPositions requestedPos){
     if (requestedPos.getValue() > lowestValidArmPosition)
         return true;
-    else    
+    else
         return false;
   }
 
