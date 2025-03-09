@@ -85,6 +85,8 @@ public class ArmSubsystem extends TestableSubsystem {
 
     Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
 
+    Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
+
   }
 
   /**
