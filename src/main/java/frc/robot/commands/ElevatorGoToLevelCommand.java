@@ -38,8 +38,8 @@ public class ElevatorGoToLevelCommand extends Command {
         leftPosError = _elevatorSubsystem.elevatorLeftMotor.getClosedLoopError();
         rightPosError = _elevatorSubsystem.elevatorRightMotor.getClosedLoopError();
 
-        rightPositionRequest = new PositionVoltage(0).withSlot(0);
-        leftPositionRequest = new PositionVoltage(0).withSlot(0);
+        rightPositionRequest = new PositionVoltage(requestPosRots).withSlot(0);
+        leftPositionRequest = new PositionVoltage(requestPosRots).withSlot(0);
     }
 
     // public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, double
@@ -81,7 +81,7 @@ public class ElevatorGoToLevelCommand extends Command {
         leftPosError.refresh();
         rightPosError.refresh();
 
-        if (requestPosRots <= 0) {
+        if (requestPosRots >= 0) {
             return _elevatorSubsystem.isAtBottom();
         } else if (leftPosition.hasUpdated() && rightPosition.hasUpdated()) {
 

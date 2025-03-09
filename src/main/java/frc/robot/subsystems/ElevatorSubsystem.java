@@ -22,8 +22,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     public double rightHomePos = DEFAULT_HOME_POS;
     public double leftHomePos = DEFAULT_HOME_POS;
 
-    public TalonFX elevatorLeftMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_LEFT_MOTOR_ID);
-    public TalonFX elevatorRightMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_RIGHT_MOTOR_ID);
+    public static TalonFX elevatorLeftMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_LEFT_MOTOR_ID);
+    public static TalonFX elevatorRightMotor = new TalonFX(Constants.CanBusIds.ELEVATOR_RIGHT_MOTOR_ID);
     private DigitalInput bottomlimitSwitch;
 
     private StatusSignal<Angle> leftPos;
@@ -51,7 +51,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.Slot0.kD = 0.1;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
-        elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 50;
+        elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 80;
         elevatorMotor1Config.CurrentLimits.StatorCurrentLimitEnable = true;
 
         elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
@@ -70,7 +70,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kD = 0.1;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
-        elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 50;
+        elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 80;
         elevatorMotor2Config.CurrentLimits.StatorCurrentLimitEnable = true;
 
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
@@ -115,7 +115,6 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 return;
             }
 
-
             this.elevatorLeftMotor.set(-0.1);
             this.elevatorRightMotor.set(-0.1);
 
@@ -127,21 +126,24 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator At Bottom", isAtBottom());
 
-        Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
-        Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble()-rightHomePos);
+        Logger.recordOutput("Elevator Left Pos", leftPos.getValueAsDouble()-leftHomePos);
+        Logger.recordOutput("Elevator Right Pos", rightPos.getValueAsDouble()-rightHomePos);
 
-        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
-        Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.refresh().getValueAsDouble() - rightHomePos);
-    }
+        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.getValueAsDouble() - leftHomePos);
+        Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.getValueAsDouble() - rightHomePos);
+
+        // Logger.recordOutput("Elevator Left Speed", elevatorLeftMotor.get());
+        // Logger.recordOutput("Elevator Right Speed", elevatorRightMotor.get());
+   }
 
     public boolean isAtBottom(){
       return bottomlimitSwitch.get();
     }
 
     public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        if (requestedPos.getRotationUnits() > lowestValidElevatorPosition)
+        // if (requestedPos.getRotationUnits() > lowestValidElevatorPosition)
             return true;
-        else
-            return false;
+        // else
+        //     return false;
     }
 }

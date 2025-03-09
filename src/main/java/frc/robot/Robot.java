@@ -44,7 +44,7 @@ public class Robot extends LoggedRobot {
     }
     
     Logger.start();
-    SignalLogger.start();
+    //SignalLogger.start();
 
     PostyManager.getInstance().runAllPOSTs(); // Run all POST tests at startup
 
