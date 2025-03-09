@@ -29,6 +29,7 @@ public class ArmSubsystem extends TestableSubsystem {
   private TalonFX armYMotor;
   private DigitalInput topSwitch; //Today on TopSwitch...
   private StatusSignal<Angle> actualPos;
+  private StatusSignal<Double> requestedPos;
   private ArmPositions targetPos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
@@ -52,6 +53,8 @@ public class ArmSubsystem extends TestableSubsystem {
     armYMotor.getConfigurator().apply(armYConfig);
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
+    requestedPos = armYMotor.getClosedLoopReference();
+    requestedPos.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
 
     registerPOSTTest("Arm Motor Connected", () -> {

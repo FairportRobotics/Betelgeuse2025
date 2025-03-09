@@ -29,8 +29,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     private StatusSignal<Angle> leftPos;
     private StatusSignal<Angle> rightPos;
 
-    private StatusSignal<Angle> leftRequestedPos;
-    private StatusSignal<Angle> rightRequestedPos;
+    private StatusSignal<Double> leftRequestedPos;
+    private StatusSignal<Double> rightRequestedPos;
 
     private ArmSubsystem armSubsystem;
 
@@ -58,6 +58,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         leftPos = elevatorLeftMotor.getPosition();
         leftPos.setUpdateFrequency(50);
 
+        leftRequestedPos = elevatorLeftMotor.getClosedLoopReference();
+        leftRequestedPos.setUpdateFrequency(50);
 
         elevatorLeftMotor.optimizeBusUtilization();
         // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -74,6 +76,10 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
         rightPos = elevatorRightMotor.getPosition();
         rightPos.setUpdateFrequency(50);
+
+        rightRequestedPos = elevatorRightMotor.getClosedLoopReference();
+        rightRequestedPos.setUpdateFrequency(50);
+
         elevatorRightMotor.optimizeBusUtilization();
         // elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
 
@@ -123,6 +129,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
         Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble()-rightHomePos);
+
+        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
+        Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.refresh().getValueAsDouble() - rightHomePos);
     }
 
     public boolean isAtBottom(){
