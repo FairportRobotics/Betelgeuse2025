@@ -132,6 +132,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.getValueAsDouble() - leftHomePos);
         Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.getValueAsDouble() - rightHomePos);
 
+        Logger.recordOutput("Elevator Lowest valid pos", lowestValidElevatorPosition);
         // Logger.recordOutput("Elevator Left Speed", elevatorLeftMotor.get());
         // Logger.recordOutput("Elevator Right Speed", elevatorRightMotor.get());
    }
@@ -141,9 +142,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        // if (requestedPos.getRotationUnits() > lowestValidElevatorPosition)
-            return true;
-        // else
-        //     return false;
+        if (requestedPos.getRotationUnits() > lowestValidElevatorPosition)
+           return true;
+        else
+            return false;
     }
 }

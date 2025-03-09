@@ -192,13 +192,14 @@ public class RobotContainer {
        driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
 
 
-driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
-        driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
-        driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
+        //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
+        //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
-        driver.a().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME));
-        driver.b().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
+        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
+        driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, -.1)));
+        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME))));
+        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 

@@ -44,9 +44,9 @@ public class ArmSubsystem extends TestableSubsystem {
     targetPos = ArmPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
-    armYConfig.Slot0.kP = 1;
-    armYConfig.Slot0.kI = 0.5;
-    armYConfig.Slot0.kD = 0.3;
+    armYConfig.Slot0.kP = .5;
+    armYConfig.Slot0.kI = 0.2;
+    armYConfig.Slot0.kD = 0.1;
     armYConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     armYConfig.CurrentLimits.StatorCurrentLimit = 30;
     armYConfig.CurrentLimits.StatorCurrentLimitEnable = true;
