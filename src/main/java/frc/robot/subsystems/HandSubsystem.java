@@ -42,6 +42,7 @@ public class HandSubsystem extends TestableSubsystem {
     
     Logger.recordOutput("Coral in hand", isCoralInHand());
 
+    Logger.recordOutput("Hand speed", handMotor.get());
   }
   
 
