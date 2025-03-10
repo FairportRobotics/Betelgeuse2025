@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.DIOValues;
+import frc.robot.Constants.ElevatorPositions;
 
 public class ArmSubsystem extends TestableSubsystem {
 
@@ -29,6 +30,7 @@ public class ArmSubsystem extends TestableSubsystem {
   private ArmPositions targetPos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
+  private double lowestValidArmPosition = ArmPositions.MIDDLE.getValue();
 
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
@@ -47,6 +49,10 @@ public class ArmSubsystem extends TestableSubsystem {
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
+
+    registerPOSTTest("Arm Motor Connected", () -> {
+            return armYMotor.isConnected();
+    });
   }
 
   @Override
@@ -137,5 +143,14 @@ public class ArmSubsystem extends TestableSubsystem {
   public void setElevatorSubsystem(ElevatorSubsystem theElevatorSubsytem){
     mElevatorSubsystem = theElevatorSubsytem;
   }
+
+  public boolean canGoToPosition(ArmPositions requestedPos){
+    if (requestedPos.getValue() > lowestValidArmPosition)
+        return true;
+    else    
+        return false;
+}
+
+
 
 }
