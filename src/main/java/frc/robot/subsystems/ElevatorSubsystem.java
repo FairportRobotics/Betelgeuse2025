@@ -10,7 +10,9 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import frc.robot.Constants;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.ElevatorPositions;
@@ -35,6 +37,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     private ArmSubsystem armSubsystem;
 
     private double lowestValidElevatorPosition = ElevatorPositions.HOME.getRotationUnits();
+
+    Alert ArmBlockingAlert = new Alert("ARM is blocking Elevator movement",AlertType.kWarning);
 
     public ElevatorSubsystem(ArmSubsystem armSubsystem) {
         super("ElevatorSubsystem");
@@ -141,10 +145,17 @@ public class ElevatorSubsystem extends TestableSubsystem {
       return bottomlimitSwitch.get();
     }
 
+    public double getActualPos(){
+        return leftPos.getValueAsDouble()-leftHomePos;
+    }
+
     public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        if (requestedPos.getRotationUnits() > lowestValidElevatorPosition)
-           return true;
-        else
+        if (armSubsystem.getActualPos().getValueAsDouble() > Constants.ArmPositions.MIDDLE.getValue()) {
+            ArmBlockingAlert.set(false);
+            return true;
+        } else {
+            ArmBlockingAlert.set(true);
             return false;
+        }
     }
 }
