@@ -162,7 +162,7 @@ public class ArmSubsystem extends TestableSubsystem {
   }
 
   public boolean canGoToPosition(ArmPositions requestedPos){
-    if (mElevatorSubsystem.getActualPos() < Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits())
+    if (mElevatorSubsystem.getActualPos() > Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits())
     {
         elevatorBlockingAlert.set(false);
         return true;      

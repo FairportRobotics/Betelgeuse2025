@@ -186,15 +186,13 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
        driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
-       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
-
-
+       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
 
         //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
-        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
-        driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, -.1)));
+        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, 3))); // shoot
+        driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // intake
         driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME))));
         driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));

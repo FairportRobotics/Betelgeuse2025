@@ -50,9 +50,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
 
         TalonFXConfiguration elevatorMotor1Config = new TalonFXConfiguration();
-        elevatorMotor1Config.Slot0.kP = 0.7;
-        elevatorMotor1Config.Slot0.kI = 0.5;
-        elevatorMotor1Config.Slot0.kD = 0.1;
+        elevatorMotor1Config.Slot0.kP = 0.2;
+        elevatorMotor1Config.Slot0.kI = 0.8;
+        elevatorMotor1Config.Slot0.kD = 0.02;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 80;
@@ -69,9 +69,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
         TalonFXConfiguration elevatorMotor2Config = new TalonFXConfiguration();
-        elevatorMotor2Config.Slot0.kP = 0.7;
-        elevatorMotor2Config.Slot0.kI = 0.5;
-        elevatorMotor2Config.Slot0.kD = 0.1;
+        elevatorMotor2Config.Slot0.kP = 0.2;
+        elevatorMotor2Config.Slot0.kI = 0.8;
+        elevatorMotor2Config.Slot0.kD = 0.02;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 80;
@@ -119,8 +119,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 return;
             }
 
-            this.elevatorLeftMotor.set(-0.1);
-            this.elevatorRightMotor.set(-0.1);
+            this.elevatorLeftMotor.set(0.1); // TODO: CONSTANT!!!
+            this.elevatorRightMotor.set(0.1); // TODO: CONSTANT!!!
 
         }
 
@@ -150,7 +150,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        if (armSubsystem.getActualPos().getValueAsDouble() > Constants.ArmPositions.MIDDLE.getValue()) {
+        if (armSubsystem.getArmPos().getValue() < Constants.ArmPositions.MIDDLE.getValue()) {
             ArmBlockingAlert.set(false);
             return true;
         } else {

@@ -27,7 +27,7 @@ public class HopperSubsystem extends TestableSubsystem {
   }
 
   public boolean isCoralInHopper(){
-    return beamBreak.get();
+    return !beamBreak.get();
   }
 
   @Override

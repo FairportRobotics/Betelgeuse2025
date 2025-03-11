@@ -20,17 +20,13 @@ public class HandSubsystem extends TestableSubsystem {
     registerPOSTTest("Motor is connected", () -> handMotor.getBusVoltage() > 0);
   }
 
-  public Boolean isCoralInHand()
   // Returns the value of the limit switch, True if hit
-  {
+  public Boolean isCoralInHand(){
     return handLimitSwitch.get();
   }
 
-  public void setSpeed(double iShowSpeed){
-    handMotor.set(iShowSpeed);
-    if (iShowSpeed == 0) {
-      handMotor.stopMotor();
-    }
+  public void setSpeed(double handSpeed){
+    handMotor.set(handSpeed);
   }
 
   @Override
