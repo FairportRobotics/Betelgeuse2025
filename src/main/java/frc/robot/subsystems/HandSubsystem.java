@@ -37,6 +37,8 @@ public class HandSubsystem extends TestableSubsystem {
   // This method will be called once per scheduler run
   public void periodic() {
     Logger.recordOutput("Coral in hand", isCoralInHand());
+
+    Logger.recordOutput("Hand speed", handMotor.get());
   }
   
   @Override
