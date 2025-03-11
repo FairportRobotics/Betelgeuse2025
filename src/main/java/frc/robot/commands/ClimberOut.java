@@ -8,7 +8,6 @@ import frc.robot.Constants.ClimberPositions;
 import frc.robot.subsystems.ClimbingSubsystem;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;

@@ -7,7 +7,6 @@ package frc.robot;
 import frc.robot.Constants.ElevatorPositions;
 import frc.robot.Constants.ControllerIds;
 import frc.robot.Constants.DriveWaypoints;
-import frc.robot.Constants.ElevatorPositions;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.commands.ArmGotoCommand;
 import frc.robot.commands.ClimberIn;
@@ -15,8 +14,6 @@ import frc.robot.commands.ClimberOut;
 import frc.robot.commands.ElevatorGoToLevelCommand;
 import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.HandCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.OutakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbingSubsystem;
 import frc.robot.subsystems.HandSubsystem;
@@ -66,7 +63,7 @@ public class RobotContainer {
                     new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
                     Commands.parallel(
                             new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE),
-                            new IntakeCommand(m_HandSubsystem)),
+                            new HandCommand(m_HandSubsystem, -.1)), // TODO: might need to change the spped to a constant later
                     Commands.parallel(
                             new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO),
                             new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
@@ -140,7 +137,7 @@ public class RobotContainer {
         SmartDashboard.putData(autoChooser);
 
         // Register command for PathPlanner here
-        NamedCommands.registerCommand("Shoot", new OutakeCommand(m_HandSubsystem));
+        NamedCommands.registerCommand("Shoot", new HandCommand(m_HandSubsystem, .1)); // TODO: might need to change the spped to a constant later
 
 
         configureBindings();

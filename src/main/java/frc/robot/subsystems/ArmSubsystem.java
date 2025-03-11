@@ -22,7 +22,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.DIOValues;
-import frc.robot.Constants.ElevatorPositions;
 
 public class ArmSubsystem extends TestableSubsystem {
 
