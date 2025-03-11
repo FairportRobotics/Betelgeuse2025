@@ -57,7 +57,7 @@ public class RobotContainer {
 
     // private final Telemetry logger = new Telemetry(MaxSpeed);
     private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-    private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+    private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem(m_armSubsystem);
     private final ClimbingSubsystem m_ClimbingSubsystem = new ClimbingSubsystem();
     private final HandSubsystem m_HandSubsystem = new HandSubsystem();
     private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(
@@ -86,7 +86,6 @@ public class RobotContainer {
      */
 
     public RobotContainer() {
-        m_elevatorSubsystem.setArmSubsystem(m_armSubsystem);
         // Load the RobotConfig from the GUI settings. You should probably
         // store this in your Constants file
         RobotConfig config;

@@ -16,8 +16,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants;
 import frc.robot.Constants.ElevatorPositions;
-import frc.robot.commands.DefaultArmDownMoveElevatorToPlayerStation;
 import frc.robot.Constants.ArmPositions;
+import frc.robot.commands.DefaultArmDownMoveElevatorToPlayerStation;
 
 public class ElevatorSubsystem extends TestableSubsystem {
     private ElevatorPositions goToPosition = ElevatorPositions.HOME;
@@ -39,8 +39,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     private double lowestValidElevatorPosition = ElevatorPositions.HOME.getRotationUnits();
 
-    public ElevatorSubsystem() {
+    public ElevatorSubsystem(ArmSubsystem armSubsystem) {
         super("ElevatorSubsystem");
+        this.armSubsystem = Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
 
         // toplimitSwitch = new DigitalInput(8);
         bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
@@ -172,14 +173,5 @@ public class ElevatorSubsystem extends TestableSubsystem {
      */
     public ElevatorPositions getGoToPosition() {
         return goToPosition;
-    }
-
-    /**
-     * Set the arm subsystem.
-     * 
-     * @param armSubsystem is the armSubsystem to be set.
-     */
-    public void setArmSubsystem(ArmSubsystem armSubsystem) {
-        this.armSubsystem = Objects.requireNonNull(armSubsystem, "armSubsystem cannot be null");
     }
 }
