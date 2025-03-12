@@ -189,6 +189,7 @@ public class RobotContainer {
        driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION));
        driver.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
        driver.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
+       driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
 
         //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));

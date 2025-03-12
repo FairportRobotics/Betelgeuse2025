@@ -80,7 +80,7 @@ public final class Constants {
     STOWED(0),
     HOME(2),
     MIDDLE(15),
-    DOWN(30),
+    DOWN(32),
     NONE(0),
     SCORING(8);
 
@@ -105,7 +105,7 @@ public final class Constants {
    */
   public enum ElevatorPositions {
     HOME(0),
-    HUMAN_PLAYER_STATION(-8.1),
+    HUMAN_PLAYER_STATION(-8),
     ARM_LIMIT(-4),  // lowest elevator position with arm down
     TWO(-4.8),
     THREE(-10.5),
