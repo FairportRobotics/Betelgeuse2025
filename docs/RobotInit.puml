@@ -1,0 +1,32 @@
+@@startuml
+
+participant RobotContainer as RC 
+Robot -> RC: new RobotContainer
+activate RobotContainer
+
+RC -> ElevatorSubsystem: new ElevatorSubsystem
+activate ElevatorSS
+
+RC -> ArmSubsystem: new ArmSubsystem
+activate ArmSubsystem
+
+RC -> HandSubsystem: new HandSubsystem
+activate HandSubsystem
+
+RC -> HopperSubsystem: new HopperSubsystem (autoIntakeCommand)
+activate HopperSubsystem
+
+RC -> CommandXboxController_driver: new m_driverController
+activate CommandXboxController_driver
+
+RC -> CommandServeDrivetrain: createDrivetrain
+activate CommandServeDrivetrain
+
+RC -> CommandXboxController_driver2: new driver
+activate CommandXboxController_driver2
+RC -> CommandXboxController_operator: new operator
+activate CommandXboxController_operator
+
+RC -> RC: Configure Bindings
+
+@@enduml

@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import org.fairportrobotics.frc.posty.TestableSubsystem;
+
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
 import com.ctre.phoenix.led.FireAnimation;
@@ -12,7 +14,7 @@ import com.ctre.phoenix.led.LarsonAnimation.BounceMode;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class LightingSubsystem extends SubsystemBase {
+public class LightingSubsystem extends TestableSubsystem {
 
     public static CANdle _CANdle;
     String currentColor = "";
@@ -22,6 +24,7 @@ public class LightingSubsystem extends SubsystemBase {
      */
     public LightingSubsystem() 
     {
+        super("LightingSubsystem");
        _CANdle = new CANdle(0);
        CANdleConfiguration config = new CANdleConfiguration();
        config.stripType = LEDStripType.BRG;
@@ -90,5 +93,21 @@ public class LightingSubsystem extends SubsystemBase {
     public void setClimbColor()
     {
         _CANdle.setLEDs(255, 215, 0);
+    }
+
+    /**
+     * Sets the CANdle to the nemo color.
+     */
+    public void nemo()
+    {
+        _CANdle.setLEDs(255, 165, 0);
+    }
+
+    /**
+     * Sets the CANdle to the underDaWata color.
+     */
+    public void underDaWata()
+    {
+        _CANdle.setLEDs(43, 101, 236);
     }
 }

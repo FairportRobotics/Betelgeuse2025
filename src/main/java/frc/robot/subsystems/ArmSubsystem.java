@@ -4,95 +4,132 @@
 
 package frc.robot.subsystems;
 
-import java.security.DigestInputStream;
-
+import org.fairportrobotics.frc.posty.TestableSubsystem;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ArmConstants.ArmPositions;
+import frc.robot.Constants.ArmPositions;
+import frc.robot.Constants.CanBusIds;
+import frc.robot.Constants.DIOValues;
 
-public class ArmSubsystem extends SubsystemBase {
+public class ArmSubsystem extends TestableSubsystem {
 
-  public TalonFX armYMotor;
-  public DigitalInput limitSwitch;
-  public StatusSignal absPos;
-  public ArmPositions pos;
-  final VelocityVoltage m_velocity = new VelocityVoltage(0);
+  private final double DEFAULT_HOME_POS = 0.00001;
+  public double armHomePos = DEFAULT_HOME_POS;
 
-  /** Creates a new ExampleSubsystem. */
+  private TalonFX armYMotor;
+  private DigitalInput topSwitch; //Today on TopSwitch...
+  private StatusSignal<Angle> actualPos;
+  private StatusSignal<Double> requestedPos;
+  private ArmPositions targetPos;
+  private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
+  private ElevatorSubsystem mElevatorSubsystem;
+  private double lowestValidArmPosition = ArmPositions.MIDDLE.getValue();
+
+  Alert elevatorBlockingAlert = new Alert("Elevator Blocking Arm movement",AlertType.kWarning);
+  
+  /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
-    armYMotor = new TalonFX(4, "rio");
-    limitSwitch = new DigitalInput(Constants.ArmConstants.LimitID);
-    pos = ArmPositions.DOWN;
+    super("ArmSubsystem");
+    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio");
+    armYMotor.setNeutralMode(NeutralModeValue.Brake);
+    topSwitch = new DigitalInput(DIOValues.ARM_LIMIT_SWITCH);
+    targetPos = ArmPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
-        armYConfig.Slot0.kP = 0.8;
-        armYConfig.Slot0.kI = 0.5;
-        armYConfig.Slot0.kD = 0.3;
-        armYMotor.getConfigurator().apply(armYConfig);
-        absPos = armYMotor.getPosition();
-        absPos.setUpdateFrequency(50);
-        armYMotor.optimizeBusUtilization();
-    armYMotor.getConfigurator().apply(armYConfig, 0.050);
-  }
+    armYConfig.Slot0.kP = .8;
+    armYConfig.Slot0.kI = 0;
+    armYConfig.Slot0.kD = 0;
+    armYConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    armYConfig.CurrentLimits.StatorCurrentLimit = 30;
+    armYConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    armYMotor.getConfigurator().apply(armYConfig);
+    actualPos = armYMotor.getPosition();
+    actualPos.setUpdateFrequency(50);
+    requestedPos = armYMotor.getClosedLoopReference();
+    requestedPos.setUpdateFrequency(50);
+    armYMotor.optimizeBusUtilization();
 
-  /**
-   * Example command factory method.
-   *
-   * @return a command
-   */
-  public Command exampleMethodCommand() {
-    // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          /* one-time action goes here */
-        });
+    registerPOSTTest("Arm Motor Connected", () -> {
+            return armYMotor.isConnected();
+    });
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    /*if (pos == ArmPositions.NONE) {
+    if (armHomePos == DEFAULT_HOME_POS) {
 
-      this.armYMotor.set(0.1);
-      if (!this.limitSwitch.get()) {
+      if (getSwitch()) {
         this.armYMotor.set(0.0);
-        pos = ArmPositions.UP;
-        armYMotor.setPosition(0);
-        absPos = armYMotor.getPosition();
+
+        StatusSignal<Angle> pos = armYMotor.getPosition();
+
+        actualPos.waitForUpdate(1.0);
+
+        armHomePos = actualPos.getValueAsDouble();
+
+        this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
+        return;
       }
+      this.armYMotor.set(-.1);
     }
-    Logger.recordOutput("Arm at Home ", !limitSwitch.get());
-    */
+    Logger.recordOutput("Arm at Home ", getSwitch());
+
+    Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
+
+    Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
+
   }
 
   /**
-   * Get the value of the curent set position for the arm.
+   * Get the value of the current set position for the arm.
    *
-   * @return an ArmPositions object that is curently set in the Subsystem. So you
-   *         can know what position the arm is curently set to. It's kinda
-   *         usefull.
+   * @return an ArmPositions object that is currently set in the Subsystem. So you
+   *         can know what position the arm is currently set to. It's kinda
+   *         useful.
    */
-  public ArmPositions getPos() {
-    return pos;
+  public ArmPositions getArmPos() {
+    return targetPos;
+  }
+
+  /**
+   * Get the value of the current position of the motor.
+   *
+   * @return The current position of the motor.
+   */
+  public StatusSignal<Angle> getActualPos() {
+    return actualPos;
+  }
+
+  /**
+   * Get the closed loop error of the motor.
+   *
+   * @return motor.getClosedLoopError. It's as shrimple as that
+   */
+  public StatusSignal<Double> getError() {
+    return armYMotor.getClosedLoopError();
+  }
+
+  /**
+   * The value of the limitswitch
+   *
+   * @return True when switch is triggered, False when not. 
+   */
+  public boolean getSwitch() {
+    return topSwitch.get();
   }
 
   /**
@@ -101,15 +138,16 @@ public class ArmSubsystem extends SubsystemBase {
    * @param newPos New ArmPositions object to go to. This is important for keeping
    *               track of where the arm is. Maybe.
    */
-  public void setPos(ArmPositions newPos, PositionVoltage PosRequest) {
-    armYMotor.setNeutralMode(NeutralModeValue.Coast);
-    pos = newPos;
-    absPos = armYMotor.getPosition();
-    PosRequest = new PositionVoltage(0).withSlot(0);
-    armYMotor.setControl(PosRequest.withPosition(pos.getValue()));
+  public void setTargetPos(ArmPositions newPos) {
+    targetPos = newPos;
+    actualPos = armYMotor.getPosition();
+    armYMotor.setControl(m_voltage.withPosition(targetPos.getValue() + armHomePos));
   }
 
-  public void stopMotor(){
+  /**
+   * What do you think this does?
+   */
+  public void stopMotor() {
     armYMotor.stopMotor();
   }
 
@@ -119,4 +157,18 @@ public class ArmSubsystem extends SubsystemBase {
 
   }
 
+  public void setElevatorSubsystem(ElevatorSubsystem theElevatorSubsytem){
+    mElevatorSubsystem = theElevatorSubsytem;
+  }
+
+  public boolean canGoToPosition(ArmPositions requestedPos){
+    if (mElevatorSubsystem.getActualPos() > Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits())
+    {
+        elevatorBlockingAlert.set(false);
+        return true;      
+    } else {
+        elevatorBlockingAlert.set(true);
+        return false;
+    }
+  }
 }

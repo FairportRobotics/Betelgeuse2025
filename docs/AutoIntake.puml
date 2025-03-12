@@ -1,0 +1,28 @@
+@startuml
+
+Scheduler -> HopperSubsystem: periodic
+
+HopperSubsystem -> AutoIntakeCommand: schedule
+
+Scheduler -> AutoIntakeCommand: execute
+AutoIntakeCommand -> HandSubsystem : SetSpeed(1);
+
+Scheduler -> AutoIntakeCommand: IsFinished
+AutoIntakeCommand -> HandSubsystem: getSwitch
+AutoIntakeCommand --> Scheduler
+
+Scheduler -> AutoIntakeCommand: end
+AutoIntakeCommand -> HandSubsytem: SetSpeed(0)
+AutoIntakeCommand --> Scheduler
+
+
+
+
+
+
+
+
+
+
+
+@enduml

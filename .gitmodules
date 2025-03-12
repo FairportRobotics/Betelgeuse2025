@@ -1,0 +1,3 @@
+[submodule "lib/Posty"]
+	path = lib/Posty
+	url = git@github.com:FairportRobotics/Posty.git

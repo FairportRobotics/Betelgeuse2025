@@ -4,18 +4,13 @@
 
 package frc.robot.commands;
 
-import frc.robot.Constants.ArmConstants.ArmPositions;
+import frc.robot.Constants.ArmPositions;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ExampleSubsystem;
-
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.revrobotics.spark.SparkBase.ControlType;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /** An example command that uses an example subsystem. */
 public class ArmDownCommand extends Command {
@@ -26,24 +21,21 @@ public class ArmDownCommand extends Command {
 
   private StatusSignal<Double> posError;
 
-  final PositionVoltage posRequest;
 
   /**
    * Creates a new ArmDownCommand.
    * ArmDownCommand brings the arm down 1 position if the current position is not
    * less than or equal to the DOWN positon
    * 
-   * @param subsystem The ArmSubsystem. You know... the thing... that does... the
-   *                  thing...
+   * @param subsystem The ArmSubsystem. If you don't give it, the robot explodes.
    */
   public ArmDownCommand(ArmSubsystem subsystem) {
     m_subsystem = subsystem;
 
-    currentPos = m_subsystem.armYMotor.getPosition();
+    currentPos = m_subsystem.getActualPos();
 
-    posError = m_subsystem.armYMotor.getClosedLoopError();
+    posError = m_subsystem.getError();
 
-    posRequest = new PositionVoltage(0).withSlot(0);
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -52,14 +44,14 @@ public class ArmDownCommand extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    pos = m_subsystem.getPos();
+    pos = m_subsystem.getArmPos();
     System.out.println("pos was " + pos);
     
 
     if (pos.ordinal() < ArmPositions.DOWN.ordinal()) {
       pos = ArmPositions.values()[pos.ordinal() + 1];
     }
-    m_subsystem.setPos(pos,posRequest);
+    m_subsystem.setTargetPos(pos);
     System.out.println("pos is now " + pos);
   }
 
