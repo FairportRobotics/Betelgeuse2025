@@ -62,7 +62,7 @@ public class RobotContainer {
             Commands.sequence(
                     new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
                     Commands.parallel(
-                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE),
+                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION),
                             new HandCommand(m_HandSubsystem, -.1)), // TODO: might need to change the spped to a constant later
                     Commands.parallel(
                             new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO),
@@ -185,16 +185,19 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-       driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
-       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
+       // driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
+       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION));
+       driver.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
+       driver.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
 
         //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
-        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, 3))); // shoot
+        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem,.2))); // shoot
         driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // intake
-        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME))));
+        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
         driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
+        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 

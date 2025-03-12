@@ -50,9 +50,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         bottomlimitSwitch = new DigitalInput(Constants.DIOValues.ELEVATOR_LIMIT_SWITCH);
 
         TalonFXConfiguration elevatorMotor1Config = new TalonFXConfiguration();
-        elevatorMotor1Config.Slot0.kP = 0.2;
-        elevatorMotor1Config.Slot0.kI = 0.8;
-        elevatorMotor1Config.Slot0.kD = 0.02;
+        elevatorMotor1Config.Slot0.kP = 1;
+        elevatorMotor1Config.Slot0.kI = 0;
+        elevatorMotor1Config.Slot0.kD = 0;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 80;
@@ -69,9 +69,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         // elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
 
         TalonFXConfiguration elevatorMotor2Config = new TalonFXConfiguration();
-        elevatorMotor2Config.Slot0.kP = 0.2;
-        elevatorMotor2Config.Slot0.kI = 0.8;
-        elevatorMotor2Config.Slot0.kD = 0.02;
+        elevatorMotor2Config.Slot0.kP = 1;
+        elevatorMotor2Config.Slot0.kI = 0;
+        elevatorMotor2Config.Slot0.kD = 0;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 80;
