@@ -187,13 +187,12 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     /**
-     * Checks if the elevator is at a certain position.
+     * Checks if the elevator is at the set position.
      * 
-     * @param position is a double that represents position.
      * @return true if the elevator is at the position, false otherwise.
      */
-    public boolean isAtPosition(double position) {
-        return Math.abs(leftRequestedPos.refresh().getValueAsDouble() - position) < 0.1;
+    public boolean isAtPosition() {
+        return Math.abs(leftRequestedPos.refresh().getValueAsDouble()) < 0.1;
     }
 
     /**

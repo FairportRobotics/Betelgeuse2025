@@ -36,7 +36,7 @@ public class ElevatorGoToLevelCommand extends Command {
     public boolean isFinished() {
         if (!isSucessful)
             return true;
-        return elevatorSubsystem.isAtPosition(position);
+        return elevatorSubsystem.isAtPosition();
     }
 
     @Override
