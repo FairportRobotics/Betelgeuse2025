@@ -197,7 +197,7 @@ public class RobotContainer {
         driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // intake
         driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
         driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
-        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
+        driver.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
