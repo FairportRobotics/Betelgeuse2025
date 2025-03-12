@@ -5,6 +5,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -37,6 +38,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     private ArmSubsystem armSubsystem;
 
     private double lowestValidElevatorPosition = ElevatorPositions.HOME.getRotationUnits();
+
+    private double goToPosition = Double.MAX_VALUE;
 
     Alert ArmBlockingAlert = new Alert("ARM is blocking Elevator movement", AlertType.kWarning);
 
@@ -157,5 +160,47 @@ public class ElevatorSubsystem extends TestableSubsystem {
             ArmBlockingAlert.set(true);
             return false;
         }
+    }
+
+    /**
+     * Sets the position of the elevator.
+     * 
+     * @param position is a double that represents position.
+     * @return true if the elevator position is set, false otherwise.
+     */
+    public boolean setPosition(double position) {
+        ElevatorPositions[] elevatorPositions = ElevatorPositions.values();
+        if (!canGoToPosition(null))
+            return false;
+        if (position < lowestValidElevatorPosition || position < elevatorPositions[0].getRotationUnits())
+            return false;
+        if (position > elevatorPositions[elevatorPositions.length - 1].getRotationUnits())
+            return false;
+        if (position == ElevatorPositions.HOME.getRotationUnits()) {
+            elevatorLeftMotor.set(-.1);
+            elevatorRightMotor.set(-.1);
+        } else {
+            elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + position));
+            elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + position));
+        }
+        return true;
+    }
+
+    /**
+     * Checks if the elevator is at a certain position.
+     * 
+     * @param position is a double that represents position.
+     * @return true if the elevator is at the position, false otherwise.
+     */
+    public boolean isAtPosition(double position) {
+        return Math.abs(leftRequestedPos.refresh().getValueAsDouble() - position) < 0.1;
+    }
+
+    /**
+     * Stops the elevator.
+     */
+    public void stopElevator() {
+        elevatorLeftMotor.stopMotor();
+        elevatorRightMotor.stopMotor();
     }
 }

@@ -9,35 +9,39 @@ import frc.robot.subsystems.ElevatorSubsystem;
 public class ElevatorGoToLevelCommand extends Command {
 
     protected ElevatorSubsystem elevatorSubsystem;
-    protected ElevatorPositions position;
+    protected double position;
+    private boolean isSucessful = false;
 
     public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPositions position) {
         Objects.requireNonNull(elevatorSubsystem, "elevator subsystem cannot be null");
         Objects.requireNonNull(position, "level cannot be null");
         addRequirements(elevatorSubsystem);
         this.elevatorSubsystem = elevatorSubsystem;
-        this.position = position;
+        this.position = position.getRotationUnits();
     }
 
-    public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem) {
+    public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, double position) {
         Objects.requireNonNull(elevatorSubsystem, "elevator subsystem cannot be null");
         addRequirements(elevatorSubsystem);
         this.elevatorSubsystem = elevatorSubsystem;
-        this.position = elevatorSubsystem.getGoToPosition();
+        this.position = position;
     }
 
     @Override
     public void execute() {
-        elevatorSubsystem.moveElevator(position);
+        isSucessful = elevatorSubsystem.setPosition(position);
     }
 
     @Override
     public boolean isFinished() {
-        return elevatorSubsystem.isAtPosition();
+        if (!isSucessful)
+            return true;
+        return elevatorSubsystem.isAtPosition(position);
     }
 
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.stopElevator();
+        if (!interrupted)
+            elevatorSubsystem.stopElevator();
     }
 }
