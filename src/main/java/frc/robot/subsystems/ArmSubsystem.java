@@ -15,55 +15,66 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.Constants;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.DIOValues;
-import frc.robot.Constants.ElevatorPositions;
 
 public class ArmSubsystem extends TestableSubsystem {
+
+  private final double DEFAULT_HOME_POS = 0.00001;
+  public double armHomePos = DEFAULT_HOME_POS;
 
   private TalonFX armYMotor;
   private DigitalInput topSwitch; //Today on TopSwitch...
   private StatusSignal<Angle> actualPos;
-  public double armHomePos = Double.MAX_VALUE;
+  private StatusSignal<Double> requestedPos;
   private ArmPositions targetPos;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
   private double lowestValidArmPosition = ArmPositions.MIDDLE.getValue();
 
+  Alert elevatorBlockingAlert = new Alert("Elevator Blocking Arm movement",AlertType.kWarning);
+  
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     super("ArmSubsystem");
-    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio"); // TODO: FIX ID
+    armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio");
     armYMotor.setNeutralMode(NeutralModeValue.Brake);
     topSwitch = new DigitalInput(DIOValues.ARM_LIMIT_SWITCH);
     targetPos = ArmPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
-    armYConfig.Slot0.kP = 1;
-    armYConfig.Slot0.kI = 0.5;
-    armYConfig.Slot0.kD = 0.3;
+    armYConfig.Slot0.kP = .8;
+    armYConfig.Slot0.kI = 0;
+    armYConfig.Slot0.kD = 0;
     armYConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    armYConfig.CurrentLimits.StatorCurrentLimit = 30;
+    armYConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     armYMotor.getConfigurator().apply(armYConfig);
     actualPos = armYMotor.getPosition();
     actualPos.setUpdateFrequency(50);
+    requestedPos = armYMotor.getClosedLoopReference();
+    requestedPos.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
 
     registerPOSTTest("Arm Motor Connected", () -> {
             return armYMotor.isConnected();
     });
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (armHomePos == Double.MAX_VALUE) {
+    if (armHomePos == DEFAULT_HOME_POS) {
 
-      this.armYMotor.set(0.1);
       if (getSwitch()) {
         this.armYMotor.set(0.0);
-        
+
         StatusSignal<Angle> pos = armYMotor.getPosition();
 
         actualPos.waitForUpdate(1.0);
@@ -71,10 +82,16 @@ public class ArmSubsystem extends TestableSubsystem {
         armHomePos = actualPos.getValueAsDouble();
 
         this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
+        return;
       }
+      this.armYMotor.set(-.1);
     }
-    Logger.recordOutput("Arm at Home ", !topSwitch.get());
-    
+    Logger.recordOutput("Arm at Home ", getSwitch());
+
+    Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
+
+    Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
+
   }
 
   /**
@@ -145,12 +162,13 @@ public class ArmSubsystem extends TestableSubsystem {
   }
 
   public boolean canGoToPosition(ArmPositions requestedPos){
-    if (requestedPos.getValue() > lowestValidArmPosition)
-        return true;
-    else    
+    if (mElevatorSubsystem.getActualPos() > Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits())
+    {
+        elevatorBlockingAlert.set(false);
+        return true;      
+    } else {
+        elevatorBlockingAlert.set(true);
         return false;
-}
-
-
-
+    }
+  }
 }

@@ -38,12 +38,12 @@ public final class Constants {
   }
 
   public static class DIOValues {
-    public static final int ALGAE_LIMIT_SWITCH        = 0; // NOT DEFINED
-    public static final int ARM_LIMIT_SWITCH          = 0; // NOT DEFINED
+    public static final int ALGAE_LIMIT_SWITCH        = 15; // NOT DEFINED
+    public static final int ARM_LIMIT_SWITCH          = 0;
     public static final int HAND_LIMIT_SWITCH         = 1;
-    public static final int ELEVATOR_LIMIT_SWITCH     = 2;
+    public static final int ELEVATOR_LIMIT_SWITCH     = 3;
     public static final int CLIMBER_LIMIT_SWITCH      = 4;
-    public static final int HOPPER_BEAM_BREAK_SENSOR  = 5;
+    public static final int HOPPER_BEAM_BREAK_SENSOR  = 2;
   }
 
   public static class ControllerIds {
@@ -77,10 +77,12 @@ public final class Constants {
    * The ArmPositions Enum is used to store positons for the arm.
    */
   public enum ArmPositions {
-    UP(0),
-    MIDDLE(.25),
-    DOWN(.5),
-    NONE(0);
+    STOWED(0),
+    HOME(2),
+    MIDDLE(15),
+    DOWN(32),
+    NONE(0),
+    SCORING(8);
 
     double mArmPosition;
 
@@ -103,12 +105,11 @@ public final class Constants {
    */
   public enum ElevatorPositions {
     HOME(0),
-    HUMAN_PLAYER_STATION(4),
-    ARM_LIMIT(4),  // lowest elevator position with arm down
-    ONE(5),
-    TWO(7),
-    THREE(10),
-    FOUR(15);
+    HUMAN_PLAYER_STATION(-8),
+    ARM_LIMIT(-4),  // lowest elevator position with arm down
+    TWO(-4.8),
+    THREE(-10.5),
+    FOUR(-19);
 
     double mElevatorPosition;
 

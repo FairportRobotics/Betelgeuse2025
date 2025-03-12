@@ -39,10 +39,14 @@ public class HandCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return _HandSubsystem.getSwitch();
+    if(_HandSubsystem.isCoralInHand() && speed < 0)
+      return true;
+    else{
+      return false;
+    }
   }
 
-  // Stops the movement of the motor.
+  // Stops the movement of the motor. 
   @Override
   public void end(boolean interrupted) {
     _HandSubsystem.setSpeed(0.0);

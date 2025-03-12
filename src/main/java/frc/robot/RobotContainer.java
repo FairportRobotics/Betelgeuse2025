@@ -7,15 +7,13 @@ package frc.robot;
 import frc.robot.Constants.ElevatorPositions;
 import frc.robot.Constants.ControllerIds;
 import frc.robot.Constants.DriveWaypoints;
-import frc.robot.Constants.ElevatorPositions;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.commands.ArmGotoCommand;
 import frc.robot.commands.ClimberIn;
 import frc.robot.commands.ClimberOut;
 import frc.robot.commands.ElevatorGoToLevelCommand;
+import frc.robot.commands.ElevatorUpCommand;
 import frc.robot.commands.HandCommand;
-import frc.robot.commands.IntakeCommand;
-import frc.robot.commands.OutakeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbingSubsystem;
 import frc.robot.subsystems.HandSubsystem;
@@ -64,8 +62,8 @@ public class RobotContainer {
             Commands.sequence(
                     new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
                     Commands.parallel(
-                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE),
-                            new IntakeCommand(m_HandSubsystem)),
+                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION),
+                            new HandCommand(m_HandSubsystem, -.1)), // TODO: might need to change the spped to a constant later
                     Commands.parallel(
                             new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO),
                             new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
@@ -139,7 +137,7 @@ public class RobotContainer {
         SmartDashboard.putData(autoChooser);
 
         // Register command for PathPlanner here
-        NamedCommands.registerCommand("Shoot", new OutakeCommand(m_HandSubsystem));
+        NamedCommands.registerCommand("Shoot", new HandCommand(m_HandSubsystem, .1)); // TODO: might need to change the spped to a constant later
 
         configureBindings();
     }
@@ -186,14 +184,21 @@ public class RobotContainer {
 
         // reset the field-centric heading on left bumper press
         driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
-        driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
-        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(.5), new HandCommand(m_HandSubsystem, .1)));
-        driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
-        driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
-        driver.a().onTrue(new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE));
+       // driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HOME));
+       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION));
+       driver.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
+       driver.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
+       driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
 
-        driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
+        //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
+        //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
+
+        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem,.2))); // shoot
+        driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // intake
+        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
+        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
+        driver.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
+        //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
         // Test commands for testing :)

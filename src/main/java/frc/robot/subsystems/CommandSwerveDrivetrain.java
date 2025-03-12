@@ -274,6 +274,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         Subsystem.super.periodic();
+        Logger.recordOutput("SwerveStates", this.getState().ModuleStates);
 
         Logger.recordOutput("Odemetry Pose", this.getPose());
         field.setRobotPose(this.getPose());

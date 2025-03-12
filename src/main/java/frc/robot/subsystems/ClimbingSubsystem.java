@@ -37,7 +37,7 @@ public class ClimbingSubsystem extends TestableSubsystem {
     pos = ClimberPositions.NONE;
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
-        armYConfig.Slot0.kP = 0.8;
+        armYConfig.Slot0.kP = 0.3;
         armYConfig.Slot0.kI = 0.5;
         armYConfig.Slot0.kD = 0.3;
         climbingMotor.getConfigurator().apply(armYConfig);
@@ -67,8 +67,12 @@ public class ClimbingSubsystem extends TestableSubsystem {
         error.setUpdateFrequency(10);
       }
     }
-    Logger.recordOutput("Arm at Home ", limitSwitch.get());
     */
+    Logger.recordOutput("Climber at home", isAtHome());
+  }
+
+  public boolean isAtHome(){
+    return limitSwitch.get();
   }
 
   /**
