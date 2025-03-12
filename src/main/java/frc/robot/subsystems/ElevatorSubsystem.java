@@ -165,23 +165,23 @@ public class ElevatorSubsystem extends TestableSubsystem {
     /**
      * Sets the position of the elevator.
      * 
-     * @param position is a double that represents position.
+     * @param setPosition is a double that represents position.
      * @return true if the elevator position is set, false otherwise.
      */
-    public boolean setPosition(double position) {
+    public boolean setPosition(double setPosition) {
         ElevatorPositions[] elevatorPositions = ElevatorPositions.values();
         if (!canGoToPosition(null))
             return false;
-        if (position < lowestValidElevatorPosition || position < elevatorPositions[0].getRotationUnits())
+        if (setPosition < lowestValidElevatorPosition || setPosition < elevatorPositions[0].getRotationUnits())
             return false;
-        if (position > elevatorPositions[elevatorPositions.length - 1].getRotationUnits())
+        if (setPosition > elevatorPositions[elevatorPositions.length - 1].getRotationUnits())
             return false;
-        if (position == ElevatorPositions.HOME.getRotationUnits()) {
+        if (setPosition == ElevatorPositions.HOME.getRotationUnits()) {
             elevatorLeftMotor.set(-.1);
             elevatorRightMotor.set(-.1);
         } else {
-            elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + position));
-            elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + position));
+            elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition));
+            elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition));
         }
         return true;
     }
@@ -191,7 +191,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
      * 
      * @return true if the elevator is at the position, false otherwise.
      */
-    public boolean isAtPosition() {
+    public boolean isAtPosition(double checkPosition) {
+        if (checkPosition == ElevatorPositions.HOME.getRotationUnits())
+            return bottomlimitSwitch.get();
         return Math.abs(leftRequestedPos.refresh().getValueAsDouble()) < 0.1;
     }
 
