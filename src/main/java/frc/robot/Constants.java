@@ -107,6 +107,7 @@ public final class Constants {
     HOME(0),
     HUMAN_PLAYER_STATION(-8),
     ARM_LIMIT(-4),  // lowest elevator position with arm down
+    ONE(-1),
     TWO(-4.8),
     THREE(-10.5),
     FOUR(-19);
