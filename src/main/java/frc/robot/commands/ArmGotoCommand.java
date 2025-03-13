@@ -35,7 +35,7 @@ public class ArmGotoCommand extends Command {
     
     _armSubsystem = subsystem;
     pos = newPos;
-    posError = _armSubsystem.getError();
+    posError = _armSubsystem.getPosError();
     currentPos = _armSubsystem.getActualPos();
 
     // Use addRequirements() here to declare subsystem dependencies.

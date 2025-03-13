@@ -34,7 +34,7 @@ public class ArmDownCommand extends Command {
 
     currentPos = m_subsystem.getActualPos();
 
-    posError = m_subsystem.getError();
+    posError = m_subsystem.getPosError();
 
 
     // Use addRequirements() here to declare subsystem dependencies.

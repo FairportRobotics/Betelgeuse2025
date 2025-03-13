@@ -31,7 +31,7 @@ public class ArmUpCommand extends Command {
     m_subsystem = subsystem;
     System.out.println(m_subsystem.getArmPos());
     currentPos = m_subsystem.getActualPos();
-    posError = m_subsystem.getError();
+    posError = m_subsystem.getPosError();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);

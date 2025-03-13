@@ -34,7 +34,7 @@ public class HopperSubsystem extends TestableSubsystem {
   public void periodic() {
     // This method will be called once per scheduler run    
  
-    alert.set(beamBreak.get());
+    alert.set(!beamBreak.get());
 
     if (!beamBreak.get() && !m_autoIntakeCommand.isScheduled()) {
       //m_autoIntakeCommand.schedule();
