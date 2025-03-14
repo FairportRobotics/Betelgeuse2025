@@ -105,8 +105,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS) {
 
             if (isAtBottom()) {
-                this.elevatorLeftMotor.set(0.0);
-                this.elevatorRightMotor.set(0.0);
+                elevatorLeftMotor.set(0.0);
+                elevatorRightMotor.set(0.0);
 
                 StatusSignal<Angle> leftPos = elevatorLeftMotor.getPosition();
                 StatusSignal<Angle> rightPos = elevatorRightMotor.getPosition();
@@ -117,13 +117,13 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 leftHomePos = leftPos.getValueAsDouble();
                 rightHomePos = rightPos.getValueAsDouble();
 
-                this.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
-                this.elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+                elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
+                elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
                 return;
             }
 
-            this.elevatorLeftMotor.set(0.1); // TODO: CONSTANT!!!
-            this.elevatorRightMotor.set(0.1); // TODO: CONSTANT!!!
+            elevatorLeftMotor.set(0.1); // TODO: CONSTANT!!!
+            elevatorRightMotor.set(0.1); // TODO: CONSTANT!!!
 
         }
 
