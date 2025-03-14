@@ -183,6 +183,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
             elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition));
             elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition));
         }
+        goToPosition = setPosition;
         return true;
     }
 
@@ -191,8 +192,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
      * 
      * @return true if the elevator is at the position, false otherwise.
      */
-    public boolean isAtPosition(double checkPosition) {
-        if (checkPosition == ElevatorPositions.HOME.getRotationUnits())
+    public boolean isAtPosition() {
+        if (goToPosition == ElevatorPositions.HOME.getRotationUnits())
             return bottomlimitSwitch.get();
         return Math.abs(leftRequestedPos.refresh().getValueAsDouble()) < 0.1;
     }
