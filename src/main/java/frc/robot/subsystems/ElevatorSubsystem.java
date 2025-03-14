@@ -211,6 +211,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
      * @return true if the elevator position is set, false otherwise.
      */
     public boolean setPosition(double setPosition) {
+        if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS)
+            return false;
         if (goToPosition == setPosition)
             return false;
         if (!canGoToPosition(null))
