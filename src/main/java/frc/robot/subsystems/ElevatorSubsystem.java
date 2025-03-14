@@ -169,13 +169,17 @@ public class ElevatorSubsystem extends TestableSubsystem {
      * @return true if the elevator position is set, false otherwise.
      */
     public boolean setPosition(double setPosition) {
+        if (goToPosition == setPosition)
+            return false;
         if (!canGoToPosition(null))
             return false;
         if (!inRangeOfElevatorPositions(setPosition))
             return false;
         if (setPosition == ElevatorPositions.HOME.getRotationUnits()) {
-            elevatorLeftMotor.set(.1);
-            elevatorRightMotor.set(.1);
+            double difference = ElevatorPositions.HOME.getRotationUnits() - getActualPos();
+            double signForSpeed = difference / Math.abs(difference);
+            elevatorLeftMotor.set(.1 * signForSpeed);
+            elevatorRightMotor.set(.1 * signForSpeed);
         } else {
             elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition));
             elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition));
