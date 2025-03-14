@@ -13,6 +13,7 @@ import frc.robot.commands.ClimberIn;
 import frc.robot.commands.ClimberOut;
 import frc.robot.commands.ElevatorGoToLevelCommand;
 import frc.robot.commands.HandCommand;
+import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimbingSubsystem;
 import frc.robot.subsystems.HandSubsystem;
@@ -203,6 +204,9 @@ public class RobotContainer {
 
                 // reset the field-centric heading on left bumper press
                 driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+                // driver.a().onTrue(new IntakeCoralCommand(m_armSubsystem, m_HandSubsystem,
+                // m_elevatorSubsystem, m_HopperSubsystem));
                 operator.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
                 operator.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
                 operator.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
@@ -213,6 +217,8 @@ public class RobotContainer {
 
                 driver.rightTrigger()
                                 .onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // Intake
+                operator.leftTrigger()
+                                .onTrue(Commands.deadline(new WaitCommand(1), new HandCommand(m_HandSubsystem, .2))); // Outake
                 operator.rightBumper().onTrue(Commands.deadline(new WaitCommand(1),
                                 new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN)));
                 operator.leftBumper().onTrue(Commands.deadline(new WaitCommand(1), new ElevatorGoToLevelCommand(

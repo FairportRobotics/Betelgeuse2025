@@ -7,6 +7,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -35,6 +36,12 @@ public class ElevatorSubsystem extends TestableSubsystem {
     private StatusSignal<Double> leftRequestedPos;
     private StatusSignal<Double> rightRequestedPos;
 
+    private StatusSignal<Double> leftError;
+    private StatusSignal<Double> rightError;
+
+    final PositionVoltage rightPositionRequest;
+    final PositionVoltage leftPositionRequest;
+
     private ArmSubsystem armSubsystem;
 
     private double lowestValidElevatorPosition = ElevatorPositions.HOME.getRotationUnits();
@@ -56,13 +63,15 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.Slot0.kP = .8;
         elevatorMotor1Config.Slot0.kI = 0;
         elevatorMotor1Config.Slot0.kD = 0;
+        elevatorMotor1Config.Feedback.RotorToSensorRatio = 1.0;
+        elevatorMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 160;
         elevatorMotor1Config.CurrentLimits.StatorCurrentLimitEnable = true;
 
         elevatorLeftMotor.getConfigurator().apply(elevatorMotor1Config);
-        leftPos = elevatorLeftMotor.getPosition();
+        leftPos = elevatorLeftMotor.getRotorPosition();
         leftPos.setUpdateFrequency(50);
 
         leftRequestedPos = elevatorLeftMotor.getClosedLoopReference();
@@ -75,13 +84,15 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kP = .8;
         elevatorMotor2Config.Slot0.kI = 0;
         elevatorMotor2Config.Slot0.kD = 0;
+        elevatorMotor2Config.Feedback.RotorToSensorRatio = 1.0;
+        elevatorMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 160;
         elevatorMotor2Config.CurrentLimits.StatorCurrentLimitEnable = true;
 
         elevatorRightMotor.getConfigurator().apply(elevatorMotor2Config);
-        rightPos = elevatorRightMotor.getPosition();
+        rightPos = elevatorRightMotor.getRotorPosition();
         rightPos.setUpdateFrequency(50);
 
         rightRequestedPos = elevatorRightMotor.getClosedLoopReference();
@@ -89,6 +100,15 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         elevatorRightMotor.optimizeBusUtilization();
         // elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+
+        leftError = elevatorLeftMotor.getClosedLoopError();
+        leftError.setUpdateFrequency(50);
+
+        rightError = elevatorRightMotor.getClosedLoopError();
+        rightError.setUpdateFrequency(50);
+
+        rightPositionRequest = new PositionVoltage(0);
+        leftPositionRequest = new PositionVoltage(0);
 
         registerPOSTTest("Left Motor Connected", () -> {
             return elevatorLeftMotor.isConnected();
@@ -133,11 +153,14 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator At Bottom", isAtBottom());
 
-        Logger.recordOutput("Elevator Left Pos", leftPos.getValueAsDouble() - leftHomePos);
-        Logger.recordOutput("Elevator Right Pos", rightPos.getValueAsDouble() - rightHomePos);
+        Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble() - leftHomePos);
+        Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble() - rightHomePos);
 
-        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.getValueAsDouble() - leftHomePos);
-        Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.getValueAsDouble() - rightHomePos);
+        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
+        Logger.recordOutput("Elevator Right Requested Pos",
+                rightRequestedPos.refresh().getValueAsDouble() - rightHomePos);
+        Logger.recordOutput("Elevator Left Err", leftError.refresh().getValueAsDouble());
+        Logger.recordOutput("Elevator Right Err", rightError.refresh().getValueAsDouble());
 
         Logger.recordOutput("Elevator Lowest valid pos", lowestValidElevatorPosition);
         // Logger.recordOutput("Elevator Left Speed", elevatorLeftMotor.get());
@@ -146,6 +169,25 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     public boolean isAtBottom() {
         return bottomlimitSwitch.get();
+    }
+
+    public void goToPosition(ElevatorPositions targetPos) {
+        if (canGoToPosition(targetPos)) {
+            elevatorLeftMotor
+                    .setControl(leftPositionRequest.withPosition(leftHomePos + targetPos.getRotationUnits()));
+            elevatorRightMotor
+                    .setControl(rightPositionRequest.withPosition(rightHomePos + targetPos.getRotationUnits()));
+        }
+    }
+
+    public boolean isAtTargetPos() {
+        return Math.abs(leftError.refresh().getValueAsDouble()) <= 1
+                || Math.abs(rightError.refresh().getValueAsDouble()) <= 1;
+    }
+
+    public void setDrive(double drive) {
+        elevatorLeftMotor.set(drive);
+        elevatorRightMotor.set(drive);
     }
 
     public double getActualPos() {

@@ -33,6 +33,7 @@ public class ArmSubsystem extends TestableSubsystem {
   private StatusSignal<Angle> actualPos;
   private StatusSignal<Double> requestedPos;
   private ArmPositions targetPos;
+  private StatusSignal<Double> posError;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
   private double lowestValidArmPosition = ArmPositions.MIDDLE.getValue();
@@ -59,6 +60,8 @@ public class ArmSubsystem extends TestableSubsystem {
     actualPos.setUpdateFrequency(50);
     requestedPos = armYMotor.getClosedLoopReference();
     requestedPos.setUpdateFrequency(50);
+    posError = armYMotor.getClosedLoopError();
+    posError.setUpdateFrequency(50);
     armYMotor.optimizeBusUtilization();
 
     registerPOSTTest("Arm Motor Connected", () -> {
@@ -79,18 +82,22 @@ public class ArmSubsystem extends TestableSubsystem {
 
         actualPos.waitForUpdate(1.0);
 
-        armHomePos = actualPos.getValueAsDouble();
+        armHomePos = actualPos.refresh().getValueAsDouble();
 
         this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
+        setTargetPos(ArmPositions.HOME);
         return;
       }
       this.armYMotor.set(-.1);
     }
+
     Logger.recordOutput("Arm at Home ", getSwitch());
 
     Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
 
     Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
+
+    Logger.recordOutput("Arm Error", posError.refresh().getValueAsDouble());
 
   }
 
@@ -119,8 +126,16 @@ public class ArmSubsystem extends TestableSubsystem {
    *
    * @return motor.getClosedLoopError. It's as shrimple as that
    */
-  public StatusSignal<Double> getError() {
-    return armYMotor.getClosedLoopError();
+  public StatusSignal<Double> getPosError() {
+    return posError;
+  }
+
+  public boolean isAtTargetPos(){
+    return Math.abs(posError.refresh().getValue()) <= 0.2;
+  }
+
+  public void setBrakeMode(boolean brakeMode){
+    armYMotor.setNeutralMode( brakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
   }
 
   /**
@@ -140,7 +155,6 @@ public class ArmSubsystem extends TestableSubsystem {
    */
   public void setTargetPos(ArmPositions newPos) {
     targetPos = newPos;
-    actualPos = armYMotor.getPosition();
     armYMotor.setControl(m_voltage.withPosition(targetPos.getValue() + armHomePos));
   }
 
