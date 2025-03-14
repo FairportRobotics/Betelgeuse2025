@@ -41,6 +41,7 @@ public class ElevatorGoToLevelCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.stopElevator();
+        if (isSucessful)
+            elevatorSubsystem.stopElevator();
     }
 }
