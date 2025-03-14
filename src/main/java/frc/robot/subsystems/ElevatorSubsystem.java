@@ -258,7 +258,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     public boolean isAtPosition() {
         if (goToPosition == ElevatorPositions.HOME.getRotationUnits())
             return bottomlimitSwitch.get();
-        return Math.abs(leftRequestedPos.refresh().getValueAsDouble()) < 0.1;
+        return Math.abs(leftRequestedPos.refresh().getValueAsDouble()) < 0.1
+                && Math.abs(rightRequestedPos.refresh().getValueAsDouble()) < 0.1;
     }
 
     /**
