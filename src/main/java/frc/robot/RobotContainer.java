@@ -46,54 +46,61 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
 
-    private final SendableChooser<Command> autoChooser;
+        private final SendableChooser<Command> autoChooser;
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private double MaxAngularRate = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    // // kSpeedAt12Volts desired top speed
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        private double MaxAngularRate = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        // // kSpeedAt12Volts desired top speed
 
-    // private final Telemetry logger = new Telemetry(MaxSpeed);
-    private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
-    private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem(m_armSubsystem);
-    private final ClimbingSubsystem m_ClimbingSubsystem = new ClimbingSubsystem();
-    private final HandSubsystem m_HandSubsystem = new HandSubsystem();
-    private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(
-            Commands.sequence(
-                    new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
-                    Commands.parallel(
-                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION),
-                            new HandCommand(m_HandSubsystem, -.1)), // TODO: might need to change the spped to a
-                                                                    // constant later
-                    Commands.parallel(
-                            new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO),
-                            new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
+        // private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+        private final ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem(m_armSubsystem);
+        private final ClimbingSubsystem m_ClimbingSubsystem = new ClimbingSubsystem();
+        private final HandSubsystem m_HandSubsystem = new HandSubsystem();
+        private final HopperSubsystem m_HopperSubsystem = new HopperSubsystem(
+                        Commands.sequence(
+                                        new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN),
+                                        Commands.parallel(
+                                                        new ElevatorGoToLevelCommand(m_elevatorSubsystem,
+                                                                        ElevatorPositions.HUMAN_PLAYER_STATION),
+                                                        new HandCommand(m_HandSubsystem, -.1)), // TODO: might need to
+                                                                                                // change the spped to a
+                                                                                                // constant later
+                                        Commands.parallel(
+                                                        new ElevatorGoToLevelCommand(m_elevatorSubsystem,
+                                                                        ElevatorPositions.TWO),
+                                                        new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
 
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
-    // Replace with CommandPS4Controller or CommandJoystick if needed
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    private final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+        // Replace with CommandPS4Controller or CommandJoystick if needed
+        public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+        private final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
-    private final CommandXboxController driver = new CommandXboxController(ControllerIds.DRIVER_CONTROLLER_PORT);
-    private final CommandXboxController operator = new CommandXboxController(ControllerIds.OPERATOR_CONTROLLER_PORT);
+        private final CommandXboxController driver = new CommandXboxController(ControllerIds.DRIVER_CONTROLLER_PORT);
+        private final CommandXboxController operator = new CommandXboxController(
+                        ControllerIds.OPERATOR_CONTROLLER_PORT);
 
-    /**
-     * The container for the robot. Contains subsystems, OI devices, and commands.
-     */
+        /**
+         * The container for the robot. Contains subsystems, OI devices, and commands.
+         */
 
-    public RobotContainer() {
-        // Load the RobotConfig from the GUI settings. You should probably
-        // store this in your Constants file
-        RobotConfig config;
-        try {
-            config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(
-                    drivetrain::getPose, // Robot pose supplier
-                    drivetrain::resetPose, // Method to reset odometry (will be called if your auto has a starting pose)
-                    drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT RELATIVE
-                    (speeds, feedforwards) -> drivetrain.setControl(m_robotSpeeds.withSpeeds(speeds)), // Method that
+        public RobotContainer() {
+                // Load the RobotConfig from the GUI settings. You should probably
+                // store this in your Constants file
+                RobotConfig config;
+                try {
+                        config = RobotConfig.fromGUISettings();
+                        AutoBuilder.configure(
+                                        drivetrain::getPose, // Robot pose supplier
+                                        drivetrain::resetPose, // Method to reset odometry (will be called if your auto
+                                                               // has a starting pose)
+                                        drivetrain::getRobotRelativeSpeeds, // ChassisSpeeds supplier. MUST BE ROBOT
+                                                                            // RELATIVE
+                                        (speeds, feedforwards) -> drivetrain
+                                                        .setControl(m_robotSpeeds.withSpeeds(speeds)), // Method that
                                                                                                        // will drive
                                                                                                        // the robot
                                                                                                        // given ROBOT
@@ -105,116 +112,128 @@ public class RobotContainer {
                                                                                                        // individual
                                                                                                        // module
                                                                                                        // feedforwards
-                    new PPHolonomicDriveController( // PPHolonomicController is the built in path following controller
-                                                    // for holonomic drive trains
-                            new PIDConstants(1.25, 0.0, 0.1), // Translation PID constants
-                            new PIDConstants(1.0, 0.0, 0.25) // Rotation PID constants
-                    ),
-                    config, // The robot configuration
-                    () -> {
-                        // Boolean supplier that controls when the path will be mirrored for the red
-                        // alliance
-                        // This will flip the path being followed to the red side of the field.
-                        // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+                                        new PPHolonomicDriveController( // PPHolonomicController is the built in path
+                                                                        // following controller
+                                                                        // for holonomic drive trains
+                                                        new PIDConstants(1.25, 0.0, 0.1), // Translation PID constants
+                                                        new PIDConstants(1.0, 0.0, 0.25) // Rotation PID constants
+                                        ),
+                                        config, // The robot configuration
+                                        () -> {
+                                                // Boolean supplier that controls when the path will be mirrored for the
+                                                // red
+                                                // alliance
+                                                // This will flip the path being followed to the red side of the field.
+                                                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
-                        var alliance = DriverStation.getAlliance();
-                        if (alliance.isPresent()) {
-                            return alliance.get() == DriverStation.Alliance.Red;
-                        }
-                        return false;
-                    },
-                    drivetrain // Reference to this subsystem to set requirements
-            );
+                                                var alliance = DriverStation.getAlliance();
+                                                if (alliance.isPresent()) {
+                                                        return alliance.get() == DriverStation.Alliance.Red;
+                                                }
+                                                return false;
+                                        },
+                                        drivetrain // Reference to this subsystem to set requirements
+                        );
 
-        } catch (Exception e) {
-            // Handle exception as needed
-            e.printStackTrace();
+                } catch (Exception e) {
+                        // Handle exception as needed
+                        e.printStackTrace();
+                }
+
+                autoChooser = AutoBuilder.buildAutoChooser(); // We can set a default auto command by passing
+                                                              // a string into this function.
+
+                SmartDashboard.putData(autoChooser);
+
+                // Register command for PathPlanner here
+                NamedCommands.registerCommand("Shoot", new HandCommand(m_HandSubsystem, .1)); // TODO: might need to
+                                                                                              // change the
+                                                                                              // spped to a constant
+                                                                                              // later
+
+                configureBindings();
         }
 
-        autoChooser = AutoBuilder.buildAutoChooser(); // We can set a default auto command by passing
-                                                      // a string into this function.
+        /**
+         * Use this method to define your trigger->command mappings. Triggers can be
+         * created via the
+         * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
+         * an arbitrary
+         * predicate, or via the named factories in {@link
+         * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
+         * {@link
+         * CommandXboxController
+         * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
+         * PS4} controllers or
+         * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
+         * joysticks}.
+         */
+        private void configureBindings() {
+                // Note that X is defined as forward according to WPILib convention,
+                // and Y is defined as to the left according to WPILib convention.
+                drivetrain.setDefaultCommand(
+                                // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive
+                                                                                                                 // forward
+                                                                                                                 // with
+                                                                                                                 // negative
+                                                                                                                 // Y
+                                                                                                                 // (forward)
+                                                .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with
+                                                                                              // negative X (left)
+                                                .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive
+                                                                                                          // counterclockwise
+                                                                                                          // with
+                                                                                                          // negative X
+                                                                                                          // (left)
+                                ));
 
-        SmartDashboard.putData(autoChooser);
+                // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+                // point.withModuleDirection(new Rotation2d(-joystick.getLeftY(),
+                // -joystick.getLeftX()))
+                // ));
 
-        // Register command for PathPlanner here
-        NamedCommands.registerCommand("Shoot", new HandCommand(m_HandSubsystem, .1)); // TODO: might need to change the
-                                                                                      // spped to a constant later
+                // Run SysId routines when holding back/start and X/Y.
+                // Note that each routine should be run exactly once in a single log.
+                driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+                driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        configureBindings();
-    }
+                // reset the field-centric heading on left bumper press
+                driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                operator.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
+                operator.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
+                operator.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
+                operator.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE));
 
-    /**
-     * Use this method to define your trigger->command mappings. Triggers can be
-     * created via the
-     * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with
-     * an arbitrary
-     * predicate, or via the named factories in {@link
-     * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for
-     * {@link
-     * CommandXboxController
-     * Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-     * PS4} controllers or
-     * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-     * joysticks}.
-     */
-    private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with
-                                                                                                 // negative
-                                                                                                 // Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with
-                                                                                  // negative X (left)
-                ));
+                // driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
+                // driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
-        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        // point.withModuleDirection(new Rotation2d(-joystick.getLeftY(),
-        // -joystick.getLeftX()))
-        // ));
+                driver.rightTrigger()
+                                .onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // Intake
+                operator.rightBumper().onTrue(Commands.deadline(new WaitCommand(1),
+                                new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN)));
+                operator.leftBumper().onTrue(Commands.deadline(new WaitCommand(1), new ElevatorGoToLevelCommand(
+                                m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION)));
+                operator.a().onTrue((Commands.deadline(new WaitCommand(1),
+                                new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
+                operator.b().onTrue((Commands.deadline(new WaitCommand(1),
+                                new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
+                operator.x().onTrue((Commands.deadline(new WaitCommand(1),
+                                new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
+                // driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
+                // drivetrain.registerTelemetry(logger::telemeterize);
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+                // Test commands for testing :)
+                // driver.a().onTrue();
 
-        // reset the field-centric heading on left bumper press
-        driver.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        // driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem,
-        // ElevatorPositions.HOME));
-        driver.povUp()
-                .onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION));
-        driver.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
-        driver.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
-        driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
+                // driver.povUp().onTrue(new ElevatorUpCommand(m_ElevatorSubsystem));
+                // driver.povDown().onTrue(new ElevatorDownCommand(m_ElevatorSubsystem));
+        }
 
-        // driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
-        // driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
-
-        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, .2))); // shoot
-        driver.leftTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem, -.3))); // intake
-        driver.a().onTrue(
-                (Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
-        driver.b().onTrue(
-                (Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
-        driver.x()
-                .onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
-        // driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
-        // drivetrain.registerTelemetry(logger::telemeterize);
-
-        // Test commands for testing :)
-        // driver.a().onTrue();
-
-        // driver.povUp().onTrue(new ElevatorUpCommand(m_ElevatorSubsystem));
-        // driver.povDown().onTrue(new ElevatorDownCommand(m_ElevatorSubsystem));
-    }
-
-    public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
-    }
+        public Command getAutonomousCommand() {
+                return autoChooser.getSelected();
+        }
 }
