@@ -231,10 +231,11 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     /**
-     * Checks if the elevator is in range of the set positions.
+     * Checks if the passed position is in range of the rotation values of the
+     * ElevatorPositions enum.
      * 
      * @param checkPosition is a double that represents the position to check.
-     * @return true if the elevator is in range of the set positions, false
+     * @return true if the checkPosition is within range of the set positions, false
      *         otherwise.
      */
     public boolean inRangeOfElevatorPositions(double checkPosition) {
