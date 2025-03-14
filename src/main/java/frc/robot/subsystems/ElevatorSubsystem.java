@@ -177,8 +177,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         if (setPosition > elevatorPositions[elevatorPositions.length - 1].getRotationUnits())
             return false;
         if (setPosition == ElevatorPositions.HOME.getRotationUnits()) {
-            elevatorLeftMotor.set(-.1);
-            elevatorRightMotor.set(-.1);
+            elevatorLeftMotor.set(.1);
+            elevatorRightMotor.set(.1);
         } else {
             elevatorLeftMotor.setControl(new PositionVoltage(leftHomePos + setPosition));
             elevatorRightMotor.setControl(new PositionVoltage(rightHomePos + setPosition));
