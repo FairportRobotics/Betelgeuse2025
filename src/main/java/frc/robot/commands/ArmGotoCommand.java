@@ -16,9 +16,9 @@ public class ArmGotoCommand extends Command {
    * Creates a new ArmGotoCommand.
    * This command sets the arm positon to the passed in position.
    * 
-   * @param subsystem The ArmSubsystem.
-   * @param newPos    The requested position of the arm. You can find what
-   *                  diffrent positions there are in Constants.java
+   * @param armSubsystem The ArmSubsystem.
+   * @param newPos       The requested position of the arm. You can find what
+   *                     diffrent positions there are in Constants.java
    */
   public ArmGotoCommand(ArmSubsystem armSubsystem, ArmPositions newPos) {
     this.armSubsystem = armSubsystem;
