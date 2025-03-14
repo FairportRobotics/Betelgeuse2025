@@ -169,12 +169,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
      * @return true if the elevator position is set, false otherwise.
      */
     public boolean setPosition(double setPosition) {
-        ElevatorPositions[] elevatorPositions = ElevatorPositions.values();
         if (!canGoToPosition(null))
             return false;
-        if (setPosition < lowestValidElevatorPosition || setPosition < elevatorPositions[0].getRotationUnits())
-            return false;
-        if (setPosition > elevatorPositions[elevatorPositions.length - 1].getRotationUnits())
+        if (!inRangeOfElevatorPositions(setPosition))
             return false;
         if (setPosition == ElevatorPositions.HOME.getRotationUnits()) {
             elevatorLeftMotor.set(.1);
@@ -185,6 +182,26 @@ public class ElevatorSubsystem extends TestableSubsystem {
         }
         goToPosition = setPosition;
         return true;
+    }
+
+    /**
+     * Checks if the elevator is in range of the set positions.
+     * 
+     * @param checkPosition is a double that represents the position to check.
+     * @return true if the elevator is in range of the set positions, false
+     *         otherwise.
+     */
+    public boolean inRangeOfElevatorPositions(double checkPosition) {
+        double lowest = ElevatorPositions.values()[0].getRotationUnits(), highest = lowest;
+        for (ElevatorPositions elevatorPosition : ElevatorPositions.values()) {
+            if (elevatorPosition.getRotationUnits() == checkPosition)
+                return true;
+            if (elevatorPosition.getRotationUnits() < lowest)
+                lowest = elevatorPosition.getRotationUnits();
+            if (elevatorPosition.getRotationUnits() > highest)
+                highest = elevatorPosition.getRotationUnits();
+        }
+        return lowest <= checkPosition && checkPosition <= highest;
     }
 
     /**
