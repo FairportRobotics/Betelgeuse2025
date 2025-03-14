@@ -40,7 +40,6 @@ public class ArmGotoCommand extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    if (!interrupted)
-      armSubsystem.stopMotor();
+    armSubsystem.stopMotor();
   }
 }
