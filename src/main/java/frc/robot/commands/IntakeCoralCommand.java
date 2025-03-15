@@ -103,7 +103,7 @@ public class IntakeCoralCommand extends Command{
                 break;
             case ELEVATOR_AT_SCORE_POS:
 
-                armSubsystem.setTargetPos(ArmPositions.SCORING);
+                armSubsystem.setTargetPos(ArmPositions.SCORINGTOP);
 
                 if(armSubsystem.isAtTargetPos()){
                     currentStep = StateStep.READY_TO_SCORE;

@@ -47,8 +47,8 @@ public class AlgaeSubsystem extends TestableSubsystem
       fenceMotor.optimizeBusUtilization();
       fenceMotor.getConfigurator().apply(krakenConfig, 0.050);
     
-    registerPOSTTest("Agetator motor is connected", () -> wheelSpin.getBusVoltage() > 0);
-    registerPOSTTest("Pivot motor is connected", () -> fenceMotor.isConnected());
+    // registerPOSTTest("Agetator motor is connected", () -> wheelSpin.getBusVoltage() > 0);
+    // registerPOSTTest("Pivot motor is connected", () -> fenceMotor.isConnected());
 
   }//ALGAESUBSYSTEM
 

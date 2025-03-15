@@ -65,7 +65,7 @@ public class ArmSubsystem extends TestableSubsystem {
     armYMotor.optimizeBusUtilization();
 
     registerPOSTTest("Arm Motor Connected", () -> {
-            return armYMotor.isConnected();
+        return armYMotor.isConnected();
     });
 
   }

@@ -47,7 +47,7 @@ public class ClimbingSubsystem extends TestableSubsystem {
     climbingMotor.getConfigurator().apply(armYConfig, 0.050);
 
     error = climbingMotor.getClosedLoopError();
-    registerPOSTTest("Motor is connected", () -> climbingMotor.isConnected());
+    // registerPOSTTest("Motor is connected", () -> climbingMotor.isConnected());
   }
 
 

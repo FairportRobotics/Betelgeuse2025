@@ -82,7 +82,8 @@ public final class Constants {
     MIDDLE(15),
     DOWN(32),
     NONE(0),
-    SCORING(8);
+    SCORINGTOP(8),
+    SCORINGBOTTOM(19);
 
     double mArmPosition;
 
@@ -137,6 +138,18 @@ public final class Constants {
         REEF_J("J"),
         REEF_K("K"),
         REEF_L("L"),
+        REEF_A_BACK("A Back"),
+        REEF_B_BACK("B Back"),
+        REEF_C_BACK("C Back"),
+        REEF_D_BACK("D Back"),
+        REEF_E_BACK("E Back"),
+        REEF_F_BACK("F Back"),
+        REEF_G_BACK("G Back"),
+        REEF_H_BACK("H Back"),
+        REEF_I_BACK("I Back"),
+        REEF_J_BACK("J Back"),
+        REEF_K_BACK("K Back"),
+        REEF_L_BACK("L Back"),
 
         HPS_LEFT("LeftPS"),
         HPS_RIGHT("RightPS");

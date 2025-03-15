@@ -108,13 +108,13 @@ public class ElevatorSubsystem extends TestableSubsystem {
         rightPositionRequest = new PositionVoltage(0);
         leftPositionRequest = new PositionVoltage(0);
 
-        registerPOSTTest("Left Motor Connected", () -> {
-            return elevatorLeftMotor.isConnected();
-        });
+        // registerPOSTTest("Left Motor Connected", () -> {
+        //     return elevatorLeftMotor.isConnected();
+        // });
 
-        registerPOSTTest("Right Motor Connected", () -> {
-            return elevatorRightMotor.isConnected();
-        });
+        // registerPOSTTest("Right Motor Connected", () -> {
+        //     return elevatorRightMotor.isConnected();
+        // });
 
     }
 

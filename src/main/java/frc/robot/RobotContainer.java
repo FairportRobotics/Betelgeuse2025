@@ -163,11 +163,11 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * MaxSpeed) // Drive forward with
+                drivetrain.applyRequest(() -> drive.withVelocityX(-driver.getLeftY() * Math.abs(-driver.getLeftY()) * MaxSpeed) // Drive forward with
                                                                                                  // negative
                                                                                                  // Y (forward)
-                        .withVelocityY(-driver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driver.getRightX() * MaxAngularRate) // Drive counterclockwise with
+                        .withVelocityY(-driver.getLeftX() * Math.abs(-driver.getLeftX()) * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-driver.getRightX() * Math.abs(-driver.getRightX()) * MaxAngularRate) // Drive counterclockwise with
                                                                                   // negative X (left)
                 ));
 
@@ -179,10 +179,10 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // driver.back().and(driver.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // driver.back().and(driver.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // driver.start().and(driver.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -196,13 +196,13 @@ public class RobotContainer {
         //driver.x().onTrue(new ClimberOut(m_ClimbingSubsystem));
         //driver.y().onTrue(new ClimberIn(m_ClimbingSubsystem));
 
-        driver.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem,-.3))); // Intake
+        operator.rightTrigger().onTrue(Commands.deadline(new WaitCommand(2), new HandCommand(m_HandSubsystem,-.3))); // Intake
         operator.leftTrigger().onTrue(Commands.deadline(new WaitCommand(1), new HandCommand(m_HandSubsystem, .2))); // Outake
         operator.rightBumper().onTrue(Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN)));
         operator.leftBumper().onTrue(Commands.deadline(new WaitCommand(1), new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION)));
         operator.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
-        operator.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORING))));
-        operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.DOWN))));
+        operator.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP))));
+        operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.STOWED))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -215,5 +215,19 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
+ 
+    }
+
+
+    public Command getAutoScoreCommand(DriveWaypoints scoringSpot, ElevatorPositions scoringLevel){
+        return Commands.sequence(
+            Commands.parallel(
+                new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP),
+                new ElevatorGoToLevelCommand(m_elevatorSubsystem, scoringLevel),
+                drivetrain.driveToWaypoint(scoringSpot)
+            ),
+            new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGBOTTOM),
+            drivetrain.driveToWaypoint(scoringSpot)
+        );
     }
 }
