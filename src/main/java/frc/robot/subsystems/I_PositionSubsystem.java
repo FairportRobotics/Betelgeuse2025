@@ -20,7 +20,7 @@ public interface I_PositionSubsystem<T> extends Subsystem {
     /**
      * Set the position of the subsystem.
      * 
-     * @param position is the position to set the subsystem to.
+     * @param setPosition is the position to set the subsystem to.
      * @return true if the position was set successfully, false otherwise.
      */
     public boolean setPosition(T setPosition);
