@@ -7,7 +7,8 @@ import frc.robot.subsystems.I_PositionSubsystem;
  * T is some generic type that is either the position itself or a container to
  * retrieve the position that would be used to set the position of the subsystem
  * (ex. The ElevatorSubsystem uses a double to set its position, so you
- * construct a PositionCommand<Double>(ElevatorSubsystem, position) to have the
+ * construct a PositionCommand<'Double'>(ElevatorSubsystem, position) to have
+ * the
  * ElevatorSubsystem move to that position and you can use the exact same
  * PositionCommand class for the ArmSubsystem by replacing the 'Double' generic
  * with 'ArmPositions' enum).
