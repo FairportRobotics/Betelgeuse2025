@@ -19,7 +19,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.ElevatorPositions;
 
-public class ElevatorSubsystem extends TestableSubsystem {
+public class ElevatorSubsystem extends TestableSubsystem implements I_PositionSubsystem<Double> {
 
     private final double DEFAULT_HOME_POS = 0.00001;
 
@@ -65,7 +65,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.Slot0.kD = 0;
         elevatorMotor1Config.Feedback.RotorToSensorRatio = 1.0;
         elevatorMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-        elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // elevatorMotor1Config.CurrentLimits.StatorCurrentLimit = 160;
         elevatorMotor1Config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -86,7 +86,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kD = 0;
         elevatorMotor2Config.Feedback.RotorToSensorRatio = 1.0;
         elevatorMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-        elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // elevatorMotor2Config.CurrentLimits.StatorCurrentLimit = 160;
         elevatorMotor2Config.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -147,7 +147,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         }
 
-        if (armSubsystem.getActualPos().getValueAsDouble() > ArmPositions.MIDDLE.getValue()) {
+        if (armSubsystem.getArmPosition() > ArmPositions.MIDDLE.getValue()) {
             lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
         }
 
@@ -172,7 +172,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     public void goToPosition(ElevatorPositions targetPos) {
-        if (canGoToPosition(targetPos)) {
+        if (canGoToPosition(targetPos.getRotationUnits())) {
             elevatorLeftMotor
                     .setControl(leftPositionRequest.withPosition(leftHomePos + targetPos.getRotationUnits()));
             elevatorRightMotor
@@ -194,8 +194,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         return leftPos.getValueAsDouble() - leftHomePos;
     }
 
-    public boolean canGoToPosition(ElevatorPositions requestedPos) {
-        if (armSubsystem.getArmPos().getValue() < Constants.ArmPositions.MIDDLE.getValue()) {
+    @Override
+    public boolean canGoToPosition(Double checkPosition) {
+        if (armSubsystem.getArmPosition() < Constants.ArmPositions.MIDDLE.getValue()) {
             ArmBlockingAlert.set(false);
             return true;
         } else {
@@ -204,13 +205,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         }
     }
 
-    /**
-     * Sets the position of the elevator.
-     * 
-     * @param setPosition is a double that represents position.
-     * @return true if the elevator position is set, false otherwise.
-     */
-    public boolean setPosition(double setPosition) {
+    @Override
+    public boolean setPosition(Double setPosition) {
         if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS)
             return false;
         if (goToPosition == setPosition)
@@ -253,11 +249,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
         return lowest <= checkPosition && checkPosition <= highest;
     }
 
-    /**
-     * Checks if the elevator is at the set position.
-     * 
-     * @return true if the elevator is at the position, false otherwise.
-     */
+    @Override
     public boolean isAtPosition() {
         if (goToPosition == ElevatorPositions.HOME.getRotationUnits())
             return bottomlimitSwitch.get();
@@ -265,10 +257,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
                 && Math.abs(rightRequestedPos.refresh().getValueAsDouble()) < 0.1;
     }
 
-    /**
-     * Stops the elevator.
-     */
-    public void stopElevator() {
+    @Override
+    public void stopMotors() {
         elevatorLeftMotor.stopMotor();
         elevatorRightMotor.stopMotor();
     }

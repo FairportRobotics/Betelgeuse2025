@@ -14,7 +14,7 @@ public class ElevatorOffCommand extends Command {
 
     @Override
     public void initialize() {
-        elevatorSubsystem.stopElevator();
+        elevatorSubsystem.stopMotors();
     }
 
     @Override

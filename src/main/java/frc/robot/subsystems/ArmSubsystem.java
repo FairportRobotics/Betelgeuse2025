@@ -23,30 +23,30 @@ import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.CanBusIds;
 import frc.robot.Constants.DIOValues;
 
-public class ArmSubsystem extends TestableSubsystem {
+public class ArmSubsystem extends TestableSubsystem implements I_PositionSubsystem<Double> {
 
   private final double DEFAULT_HOME_POS = 0.00001;
   public double armHomePos = DEFAULT_HOME_POS;
 
   private TalonFX armYMotor;
-  private DigitalInput topSwitch; //Today on TopSwitch...
+  private DigitalInput topSwitch; // Today on TopSwitch...
   private StatusSignal<Angle> actualPos;
   private StatusSignal<Double> requestedPos;
-  private ArmPositions targetPos;
+  private double goToPosition;
   private StatusSignal<Double> posError;
   private final PositionVoltage m_voltage = new PositionVoltage(0).withSlot(0);
   private ElevatorSubsystem mElevatorSubsystem;
   private double lowestValidArmPosition = ArmPositions.MIDDLE.getValue();
 
-  Alert elevatorBlockingAlert = new Alert("Elevator Blocking Arm movement",AlertType.kWarning);
-  
+  Alert elevatorBlockingAlert = new Alert("Elevator Blocking Arm movement", AlertType.kWarning);
+
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     super("ArmSubsystem");
     armYMotor = new TalonFX(CanBusIds.ARM_MOTOR_ID, "rio");
     armYMotor.setNeutralMode(NeutralModeValue.Brake);
     topSwitch = new DigitalInput(DIOValues.ARM_LIMIT_SWITCH);
-    targetPos = ArmPositions.NONE;
+    goToPosition = ArmPositions.NONE.getValue();
 
     TalonFXConfiguration armYConfig = new TalonFXConfiguration();
     armYConfig.Slot0.kP = .8;
@@ -65,7 +65,7 @@ public class ArmSubsystem extends TestableSubsystem {
     armYMotor.optimizeBusUtilization();
 
     registerPOSTTest("Arm Motor Connected", () -> {
-            return armYMotor.isConnected();
+      return armYMotor.isConnected();
     });
 
   }
@@ -75,93 +75,44 @@ public class ArmSubsystem extends TestableSubsystem {
     // This method will be called once per scheduler run
     if (armHomePos == DEFAULT_HOME_POS) {
 
-      if (getSwitch()) {
+      if (topSwitch.get()) {
         this.armYMotor.set(0.0);
-
-        StatusSignal<Angle> pos = armYMotor.getPosition();
 
         actualPos.waitForUpdate(1.0);
 
         armHomePos = actualPos.refresh().getValueAsDouble();
 
         this.armYMotor.setNeutralMode(NeutralModeValue.Brake);
-        setTargetPos(ArmPositions.HOME);
+        setPosition(ArmPositions.HOME.getValue());
         return;
       }
       this.armYMotor.set(-.1);
     }
 
-    Logger.recordOutput("Arm at Home ", getSwitch());
+    Logger.recordOutput("Arm at Home ", topSwitch.get());
 
-    Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble()-armHomePos);
+    Logger.recordOutput("Arm Pos", actualPos.refresh().getValueAsDouble() - armHomePos);
 
-    Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
+    Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble() - armHomePos);
 
     Logger.recordOutput("Arm Error", posError.refresh().getValueAsDouble());
 
   }
 
-  /**
-   * Get the value of the current set position for the arm.
-   *
-   * @return an ArmPositions object that is currently set in the Subsystem. So you
-   *         can know what position the arm is currently set to. It's kinda
-   *         useful.
-   */
-  public ArmPositions getArmPos() {
-    return targetPos;
-  }
-
-  /**
-   * Get the value of the current position of the motor.
-   *
-   * @return The current position of the motor.
-   */
-  public StatusSignal<Angle> getActualPos() {
-    return actualPos;
-  }
-
-  /**
-   * Get the closed loop error of the motor.
-   *
-   * @return motor.getClosedLoopError. It's as shrimple as that
-   */
-  public StatusSignal<Double> getPosError() {
-    return posError;
-  }
-
-  public boolean isAtTargetPos(){
+  @Override
+  public boolean isAtPosition() {
     return Math.abs(posError.refresh().getValue()) <= 0.2;
   }
 
-  public void setBrakeMode(boolean brakeMode){
-    armYMotor.setNeutralMode( brakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  @Override
+  public boolean setPosition(Double setPosition) {
+    goToPosition = setPosition;
+    armYMotor.setControl(m_voltage.withPosition(goToPosition + armHomePos));
+    return true;
   }
 
-  /**
-   * The value of the limitswitch
-   *
-   * @return True when switch is triggered, False when not. 
-   */
-  public boolean getSwitch() {
-    return topSwitch.get();
-  }
-
-  /**
-   * Set the value of the arm position.
-   *
-   * @param newPos New ArmPositions object to go to. This is important for keeping
-   *               track of where the arm is. Maybe.
-   */
-  public void setTargetPos(ArmPositions newPos) {
-    targetPos = newPos;
-    armYMotor.setControl(m_voltage.withPosition(targetPos.getValue() + armHomePos));
-  }
-
-  /**
-   * What do you think this does?
-   */
-  public void stopMotor() {
+  @Override
+  public void stopMotors() {
     armYMotor.stopMotor();
   }
 
@@ -171,18 +122,26 @@ public class ArmSubsystem extends TestableSubsystem {
 
   }
 
-  public void setElevatorSubsystem(ElevatorSubsystem theElevatorSubsytem){
-    mElevatorSubsystem = theElevatorSubsytem;
+  public void setElevatorSubsystem(ElevatorSubsystem theElevatorSubsystem) {
+    mElevatorSubsystem = theElevatorSubsystem;
   }
 
-  public boolean canGoToPosition(ArmPositions requestedPos){
-    if (mElevatorSubsystem.getActualPos() > Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits())
-    {
-        elevatorBlockingAlert.set(false);
-        return true;      
+  public void setBrakeMode(boolean brakeMode) {
+    armYMotor.setNeutralMode(brakeMode ? NeutralModeValue.Brake : NeutralModeValue.Coast);
+  }
+
+  @Override
+  public boolean canGoToPosition(Double requestedPos) {
+    if (mElevatorSubsystem.getActualPos() > Constants.ElevatorPositions.HUMAN_PLAYER_STATION.getRotationUnits()) {
+      elevatorBlockingAlert.set(false);
+      return true;
     } else {
-        elevatorBlockingAlert.set(true);
-        return false;
+      elevatorBlockingAlert.set(true);
+      return false;
     }
+  }
+
+  public double getArmPosition() {
+    return actualPos.refresh().getValueAsDouble() - armHomePos;
   }
 }

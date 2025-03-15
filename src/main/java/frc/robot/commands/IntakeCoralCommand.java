@@ -12,9 +12,9 @@ import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HandSubsystem;
 import frc.robot.subsystems.HopperSubsystem;
 
-public class IntakeCoralCommand extends Command{
+public class IntakeCoralCommand extends Command {
 
-    private enum StateStep{
+    private enum StateStep {
         NONE,
         ELEVATOR_HPS,
         ARM_READY,
@@ -33,7 +33,8 @@ public class IntakeCoralCommand extends Command{
 
     boolean isReady = false;
 
-    public IntakeCoralCommand(ArmSubsystem armSub, HandSubsystem handSub, ElevatorSubsystem elevatorSub, HopperSubsystem hopperSub){
+    public IntakeCoralCommand(ArmSubsystem armSub, HandSubsystem handSub, ElevatorSubsystem elevatorSub,
+            HopperSubsystem hopperSub) {
         this.armSubsystem = armSub;
         this.handSubsystem = handSub;
         this.elevatorSubsystem = elevatorSub;
@@ -50,12 +51,12 @@ public class IntakeCoralCommand extends Command{
 
         Logger.recordOutput("Current Intake State", currentStep.name());
         SmartDashboard.putString("Current Intake State", currentStep.name());
-        
+
         switch (currentStep) {
             case NONE:
                 elevatorSubsystem.goToPosition(ElevatorPositions.HUMAN_PLAYER_STATION);
 
-                if(elevatorSubsystem.isAtTargetPos()){
+                if (elevatorSubsystem.isAtTargetPos()) {
                     currentStep = StateStep.ELEVATOR_HPS;
                 }
 
@@ -63,16 +64,16 @@ public class IntakeCoralCommand extends Command{
 
             case ELEVATOR_HPS:
 
-                armSubsystem.setTargetPos(ArmPositions.DOWN);
+                armSubsystem.setPosition(ArmPositions.DOWN.getValue());
 
-                if(armSubsystem.isAtTargetPos()){
+                if (armSubsystem.isAtPosition()) {
                     currentStep = StateStep.ARM_READY;
                 }
 
                 break;
             case ARM_READY:
 
-                if(hopperSubsystem.isCoralInHopper()){
+                if (hopperSubsystem.isCoralInHopper()) {
                     armSubsystem.setBrakeMode(false);
                     currentStep = StateStep.GRAB_CORAL;
                 }
@@ -83,7 +84,7 @@ public class IntakeCoralCommand extends Command{
                 handSubsystem.setSpeed(-0.5);
                 elevatorSubsystem.setDrive(0.02);
 
-                if(handSubsystem.isCoralInHand()){
+                if (handSubsystem.isCoralInHand()) {
                     elevatorSubsystem.setDrive(0);
                     handSubsystem.setSpeed(0);
                     currentStep = StateStep.CORAL_IN_HAND;
@@ -94,7 +95,7 @@ public class IntakeCoralCommand extends Command{
 
                 elevatorSubsystem.goToPosition(ElevatorPositions.THREE);
 
-                if(elevatorSubsystem.isAtTargetPos()){
+                if (elevatorSubsystem.isAtTargetPos()) {
                     armSubsystem.setBrakeMode(true);
                     currentStep = StateStep.ELEVATOR_AT_SCORE_POS;
                     break;
@@ -103,9 +104,9 @@ public class IntakeCoralCommand extends Command{
                 break;
             case ELEVATOR_AT_SCORE_POS:
 
-                armSubsystem.setTargetPos(ArmPositions.SCORING);
+                armSubsystem.setPosition(ArmPositions.SCORING.getValue());
 
-                if(armSubsystem.isAtTargetPos()){
+                if (armSubsystem.isAtPosition()) {
                     currentStep = StateStep.READY_TO_SCORE;
                 }
 

@@ -31,24 +31,24 @@ public final class Constants {
 
   public static class CanBusIds {
     public static final int ELEVATOR_RIGHT_MOTOR_ID = 13;
-    public static final int ELEVATOR_LEFT_MOTOR_ID  = 14;
-    public static final int ARM_MOTOR_ID            = 15;
-    public static final int HAND_MOTOR_ID           = 16;
-    public static final int CLIMBER_MOTOR_ID        = 19;
+    public static final int ELEVATOR_LEFT_MOTOR_ID = 14;
+    public static final int ARM_MOTOR_ID = 15;
+    public static final int HAND_MOTOR_ID = 16;
+    public static final int CLIMBER_MOTOR_ID = 19;
   }
 
   public static class DIOValues {
-    public static final int ALGAE_LIMIT_SWITCH        = 15; // NOT DEFINED
-    public static final int ARM_LIMIT_SWITCH          = 0;
-    public static final int HAND_LIMIT_SWITCH         = 1;
-    public static final int ELEVATOR_LIMIT_SWITCH     = 3;
-    public static final int CLIMBER_LIMIT_SWITCH      = 4;
-    public static final int HOPPER_BEAM_BREAK_SENSOR  = 2;
+    public static final int ALGAE_LIMIT_SWITCH = 15; // NOT DEFINED
+    public static final int ARM_LIMIT_SWITCH = 0;
+    public static final int HAND_LIMIT_SWITCH = 1;
+    public static final int ELEVATOR_LIMIT_SWITCH = 3;
+    public static final int CLIMBER_LIMIT_SWITCH = 4;
+    public static final int HOPPER_BEAM_BREAK_SENSOR = 2;
   }
 
   public static class ControllerIds {
-    public static final int DRIVER_CONTROLLER_PORT    = 0;
-    public static final int OPERATOR_CONTROLLER_PORT  = 1;
+    public static final int DRIVER_CONTROLLER_PORT = 0;
+    public static final int OPERATOR_CONTROLLER_PORT = 1;
   }
 
   public enum ClimberPositions {
@@ -100,17 +100,18 @@ public final class Constants {
     }
   }
 
-  /** Defines the rotationUnits required to get to each level from
+  /**
+   * Defines the rotationUnits required to get to each level from
    * the HOME position
    */
   public enum ElevatorPositions {
     HOME(0),
-    HUMAN_PLAYER_STATION(-9),
-    ARM_LIMIT(-4),  // lowest elevator position with arm down
-    ONE(-1),
-    TWO(-4.8),
-    THREE(-10.5),
-    FOUR(-19);
+    HUMAN_PLAYER_STATION(9),
+    ARM_LIMIT(4), // lowest elevator position with arm down
+    ONE(1),
+    TWO(4.8),
+    THREE(10.5),
+    FOUR(19);
 
     double mElevatorPosition;
 
@@ -123,30 +124,28 @@ public final class Constants {
     }
   }
 
+  public enum DriveWaypoints {
+    REEF_A("A"),
+    REEF_B("B"),
+    REEF_C("C"),
+    REEF_D("D"),
+    REEF_E("E"),
+    REEF_F("F"),
+    REEF_G("G"),
+    REEF_H("H"),
+    REEF_I("I"),
+    REEF_J("J"),
+    REEF_K("K"),
+    REEF_L("L"),
 
-    public enum DriveWaypoints {
-        REEF_A("A"),
-        REEF_B("B"),
-        REEF_C("C"),
-        REEF_D("D"),
-        REEF_E("E"),
-        REEF_F("F"),
-        REEF_G("G"),
-        REEF_H("H"),
-        REEF_I("I"),
-        REEF_J("J"),
-        REEF_K("K"),
-        REEF_L("L"),
+    HPS_LEFT("LeftPS"),
+    HPS_RIGHT("RightPS");
 
-        HPS_LEFT("LeftPS"),
-        HPS_RIGHT("RightPS");
+    public String pathName;
 
-        public String pathName;
-
-        private DriveWaypoints( String pathName ){
-            this.pathName = pathName;
-        }
+    private DriveWaypoints(String pathName) {
+      this.pathName = pathName;
     }
-
+  }
 
 }
