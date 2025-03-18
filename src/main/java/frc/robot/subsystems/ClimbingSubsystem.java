@@ -53,9 +53,7 @@ public class ClimbingSubsystem extends TestableSubsystem {
 
   @Override
   public void periodic() {
-    /*
     if (pos == ClimberPositions.NONE) {
-      System.out.println("Thing is-a going");
       climbingMotor.set(0.1);
       if (this.limitSwitch.get()) {
         this.climbingMotor.set(0.0);
@@ -67,7 +65,6 @@ public class ClimbingSubsystem extends TestableSubsystem {
         error.setUpdateFrequency(10);
       }
     }
-    */
     Logger.recordOutput("Climber at home", isAtHome());
   }
 
@@ -98,7 +95,6 @@ public class ClimbingSubsystem extends TestableSubsystem {
    * @param newPos The new ClimberPositions to go to. Big Tyler is watching.
    */
   public void setPos(ClimberPositions newPos) {
-    climbingMotor.setNeutralMode(NeutralModeValue.Coast);
     pos = newPos;
     absPos = climbingMotor.getPosition();
     climbingMotor.setControl(m_position.withPosition(pos.getValue()));

@@ -203,6 +203,8 @@ public class RobotContainer {
         operator.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
         operator.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP))));
         operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.STOWED))));
+        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ClimberOut(m_ClimbingSubsystem))));
+        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ClimberIn(m_ClimbingSubsystem))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
