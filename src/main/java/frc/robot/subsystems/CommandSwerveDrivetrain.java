@@ -8,7 +8,10 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -257,6 +260,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     @Override
     public void periodic() {
         Logger.recordOutput("SwerveStates", this.getState().ModuleStates);
+
+        for( int i=0; i<this.getModules().length; i++){
+            SwerveModule<TalonFX, TalonFX, CANcoder> module = this.getModules()[i];
+            Logger.recordOutput(i + " Module Swerve Rots", module.getEncoder().getPosition().refresh().getValueAsDouble());
+            Logger.recordOutput(i + " Module Swerve Error", module.getSteerMotor().getClosedLoopError().refresh().getValueAsDouble());
+        }
+
 
         Logger.recordOutput("Odemetry Pose", this.getPose());
         field.setRobotPose(this.getPose());
