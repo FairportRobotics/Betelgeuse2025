@@ -160,8 +160,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
         Logger.recordOutput("Elevator Right Err", rightError.refresh().getValueAsDouble());
 
         Logger.recordOutput("Elevator Lowest valid pos", lowestValidElevatorPosition);
-        // Logger.recordOutput("Elevator Left Speed", elevatorLeftMotor.get());
-        // Logger.recordOutput("Elevator Right Speed", elevatorRightMotor.get());
+
+        Logger.recordOutput("Elevator At Target Position", isAtTargetPos());
    }
 
     public boolean isAtBottom(){
@@ -178,7 +178,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     public boolean isAtTargetPos(){
-        return Math.abs(leftError.refresh().getValueAsDouble()) <= 1 || Math.abs(rightError.refresh().getValueAsDouble()) <= 1;
+        if(leftError.getValue() == 0.0 || rightError.getValue() == 0.0) return false;
+        return Math.abs(leftError.refresh().getValue()) <= 1.2 && Math.abs(rightError.refresh().getValue()) <= 1.2;
     }
 
     public void setDrive(double drive){

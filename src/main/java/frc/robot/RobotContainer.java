@@ -187,7 +187,6 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        //driver.a().onTrue(new IntakeCoralCommand(m_armSubsystem, m_HandSubsystem, m_elevatorSubsystem, m_HopperSubsystem));
        operator.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
        operator.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
        operator.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
@@ -202,9 +201,10 @@ public class RobotContainer {
         operator.leftBumper().onTrue(Commands.deadline(new WaitCommand(1), new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.HUMAN_PLAYER_STATION)));
         operator.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
         operator.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP))));
-        operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.STOWED))));
-        driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ClimberOut(m_ClimbingSubsystem))));
-        driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ClimberIn(m_ClimbingSubsystem))));
+        operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME))));
+        driver.a().onTrue(new IntakeCoralCommand(m_armSubsystem, m_HandSubsystem, m_elevatorSubsystem, m_HopperSubsystem));
+        //driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ClimberOut(m_ClimbingSubsystem))));
+        //driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ClimberIn(m_ClimbingSubsystem))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
         // drivetrain.registerTelemetry(logger::telemeterize);
 
