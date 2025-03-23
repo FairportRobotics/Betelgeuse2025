@@ -78,12 +78,12 @@ public final class Constants {
    */
   public enum ArmPositions {
     STOWED(0),
-    HOME(2),
-    MIDDLE(15),
-    DOWN(32),
+    HOME(3),
+    MIDDLE(23),
+    DOWN(52),
     NONE(0),
-    SCORINGTOP(8),
-    SCORINGBOTTOM(19);
+    SCORINGTOP(14),
+    SCORINGBOTTOM(20);
 
     double mArmPosition;
 

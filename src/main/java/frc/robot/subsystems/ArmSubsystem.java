@@ -53,7 +53,7 @@ public class ArmSubsystem extends TestableSubsystem {
     armYConfig.Slot0.kI = 0;
     armYConfig.Slot0.kD = 0;
     armYConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    armYConfig.CurrentLimits.StatorCurrentLimit = 30;
+    armYConfig.CurrentLimits.StatorCurrentLimit = 20;
     armYConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     armYMotor.getConfigurator().apply(armYConfig);
     actualPos = armYMotor.getPosition();

@@ -80,7 +80,7 @@ public class IntakeCoralCommand extends Command{
                 break;
             case GRAB_CORAL:
 
-                handSubsystem.setSpeed(-0.5);
+                handSubsystem.setSpeed(-0.3);
                 elevatorSubsystem.setDrive(0.02);
 
                 if(handSubsystem.isCoralInHand()){
