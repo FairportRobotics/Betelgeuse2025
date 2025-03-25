@@ -1,9 +1,7 @@
 package frc.robot.commands;
 
 import org.littletonrobotics.junction.Logger;
-import org.w3c.dom.ElementTraversal;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ArmPositions;
 import frc.robot.Constants.ElevatorPositions;
@@ -31,7 +29,8 @@ public class IntakeCoralCommand extends Command{
 
     StateStep currentStep = StateStep.NONE;
 
-    boolean isReady = false;
+    private final double ELEVATOR_TOO_LOW = -6;
+    private final double ELEVATOR_READY_FOR_ARM = -7;
 
     public IntakeCoralCommand(ArmSubsystem armSub, HandSubsystem handSub, ElevatorSubsystem elevatorSub, HopperSubsystem hopperSub){
         this.armSubsystem = armSub;
@@ -49,8 +48,7 @@ public class IntakeCoralCommand extends Command{
     public void execute() {
 
         Logger.recordOutput("Current Intake State", currentStep.name());
-        SmartDashboard.putString("Current Intake State", currentStep.name());
-        
+
         switch (currentStep) {
             case NONE:
                 elevatorSubsystem.goToPosition(ElevatorPositions.HUMAN_PLAYER_STATION);
@@ -83,12 +81,13 @@ public class IntakeCoralCommand extends Command{
                 handSubsystem.setSpeed(-0.3);
                 elevatorSubsystem.setDrive(0.02);
 
-                if(elevatorSubsystem.getActualPos() >= -6){ // Failed, abort
-                  elevatorSubsystem.setDrive(0);
-                  elevatorSubsystem.goToPosition(ElevatorPositions.FOUR);
-                  handSubsystem.setSpeed(0);
-                  currentStep = StateStep.NONE;
-                  break;
+                if(elevatorSubsystem.getActualPos() >= ELEVATOR_TOO_LOW){
+                    // The elevator went too far down. Go back up and rest state machine.
+                    elevatorSubsystem.setDrive(0);
+                    elevatorSubsystem.goToPosition(ElevatorPositions.FOUR);
+                    handSubsystem.setSpeed(0);
+                    currentStep = StateStep.NONE;
+                    break;
                 }
 
                 if(handSubsystem.isCoralInHand()){
@@ -102,7 +101,7 @@ public class IntakeCoralCommand extends Command{
 
                 elevatorSubsystem.goToPosition(ElevatorPositions.THREE);
 
-                if(elevatorSubsystem.getActualPos() <= -7){
+                if(elevatorSubsystem.getActualPos() <= ELEVATOR_READY_FOR_ARM){
                     armSubsystem.setBrakeMode(true);
                     currentStep = StateStep.ELEVATOR_AT_SCORE_POS;
                     break;
