@@ -83,6 +83,14 @@ public class IntakeCoralCommand extends Command{
                 handSubsystem.setSpeed(-0.3);
                 elevatorSubsystem.setDrive(0.02);
 
+                if(elevatorSubsystem.getActualPos() >= -6){ // Failed, abort
+                  elevatorSubsystem.setDrive(0);
+                  elevatorSubsystem.goToPosition(ElevatorPositions.FOUR);
+                  handSubsystem.setSpeed(0);
+                  currentStep = StateStep.NONE;
+                  break;
+                }
+
                 if(handSubsystem.isCoralInHand()){
                     elevatorSubsystem.setDrive(0);
                     handSubsystem.setSpeed(0);
@@ -94,7 +102,7 @@ public class IntakeCoralCommand extends Command{
 
                 elevatorSubsystem.goToPosition(ElevatorPositions.THREE);
 
-                if(elevatorSubsystem.isAtTargetPos()){
+                if(elevatorSubsystem.getActualPos() <= -7){
                     armSubsystem.setBrakeMode(true);
                     currentStep = StateStep.ELEVATOR_AT_SCORE_POS;
                     break;
@@ -124,8 +132,6 @@ public class IntakeCoralCommand extends Command{
 
     @Override
     public void end(boolean interrupted) {
-        elevatorSubsystem.setDrive(0);
-        handSubsystem.setSpeed(0);
     }
 
 }

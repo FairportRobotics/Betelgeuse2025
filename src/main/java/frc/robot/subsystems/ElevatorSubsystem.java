@@ -48,6 +48,8 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     Alert ArmBlockingAlert = new Alert("ARM is blocking Elevator movement",AlertType.kWarning);
 
+    ElevatorPositions targetPos = ElevatorPositions.HOME;
+
     public ElevatorSubsystem(ArmSubsystem armSubsystem) {
         super("ElevatorSubsystem");
 
@@ -61,6 +63,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor1Config.Slot0.kP = .8;
         elevatorMotor1Config.Slot0.kI = 0;
         elevatorMotor1Config.Slot0.kD = 0;
+        elevatorMotor1Config.Slot1.kP = 0.2;
+        elevatorMotor1Config.Slot1.kI = 0;
+        elevatorMotor1Config.Slot1.kD = 0;
         elevatorMotor1Config.Feedback.RotorToSensorRatio = 1.0;
         elevatorMotor1Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         elevatorMotor1Config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -82,6 +87,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
         elevatorMotor2Config.Slot0.kP = .8;
         elevatorMotor2Config.Slot0.kI = 0;
         elevatorMotor2Config.Slot0.kD = 0;
+        elevatorMotor2Config.Slot1.kP = 0.2;
+        elevatorMotor2Config.Slot1.kI = 0.0;
+        elevatorMotor2Config.Slot1.kD = 0.0;
         elevatorMotor2Config.Feedback.RotorToSensorRatio = 1.0;
         elevatorMotor2Config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
         elevatorMotor2Config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -120,30 +128,30 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
     @Override
     public void periodic() {
-        if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS) {
-
-            if (isAtBottom()) {
-                this.elevatorLeftMotor.set(0.0);
-                this.elevatorRightMotor.set(0.0);
-
-                StatusSignal<Angle> leftPos = elevatorLeftMotor.getPosition();
-                StatusSignal<Angle> rightPos = elevatorRightMotor.getPosition();
-
-                leftPos.waitForUpdate(1.0);
-                rightPos.waitForUpdate(1.0);
-
-                leftHomePos = leftPos.getValueAsDouble();
-                rightHomePos = rightPos.getValueAsDouble();
-
-                this.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
-                this.elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
-                return;
-            }
-
-            this.elevatorLeftMotor.set(0.1); // TODO: CONSTANT!!!
-            this.elevatorRightMotor.set(0.1); // TODO: CONSTANT!!!
-
-        }
+        //if (leftHomePos == DEFAULT_HOME_POS || rightHomePos == DEFAULT_HOME_POS) {
+        //
+        //    if (isAtBottom()) {
+        //        this.elevatorLeftMotor.set(0.0);
+        //        this.elevatorRightMotor.set(0.0);
+        //
+        //        StatusSignal<Angle> leftPos = elevatorLeftMotor.getPosition();
+        //        StatusSignal<Angle> rightPos = elevatorRightMotor.getPosition();
+        //
+        //        leftPos.waitForUpdate(1.0);
+        //        rightPos.waitForUpdate(1.0);
+        //
+        //        leftHomePos = leftPos.getValueAsDouble();
+        //        rightHomePos = rightPos.getValueAsDouble();
+        //
+        //        this.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
+        //        this.elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
+        //        return;
+        //    }
+        //
+        //    this.elevatorLeftMotor.set(0.1); // TODO: CONSTANT!!!
+        //    this.elevatorRightMotor.set(0.1); // TODO: CONSTANT!!!
+        //
+        //}
 
         if (armSubsystem.getActualPos().getValueAsDouble() > ArmPositions.MIDDLE.getValue()) {
             lowestValidElevatorPosition = ElevatorPositions.ARM_LIMIT.getRotationUnits();
@@ -156,8 +164,7 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
         Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.refresh().getValueAsDouble() - rightHomePos);
-        Logger.recordOutput("Elevator Left Err", leftError.refresh().getValueAsDouble());
-        Logger.recordOutput("Elevator Right Err", rightError.refresh().getValueAsDouble());
+        Logger.recordOutput("Elevator Error", getPosError());
 
         Logger.recordOutput("Elevator Lowest valid pos", lowestValidElevatorPosition);
 
@@ -169,17 +176,31 @@ public class ElevatorSubsystem extends TestableSubsystem {
     }
 
     public void goToPosition(ElevatorPositions targetPos){
-        if (canGoToPosition(targetPos)) {
+        this.targetPos = targetPos;
+        //if (canGoToPosition(targetPos)) {
+
+        if(targetPos.getRotationUnits() <= getActualPos() ){ 
             elevatorLeftMotor
-                    .setControl(leftPositionRequest.withPosition(leftHomePos + targetPos.getRotationUnits()));
+                    .setControl(leftPositionRequest.withSlot(0).withPosition(leftHomePos + targetPos.getRotationUnits()));
             elevatorRightMotor
-                    .setControl(rightPositionRequest.withPosition(rightHomePos + targetPos.getRotationUnits()));
+                    .setControl(rightPositionRequest.withSlot(0).withPosition(rightHomePos + targetPos.getRotationUnits()));
+        }else{
+            elevatorLeftMotor
+                    .setControl(leftPositionRequest.withSlot(1).withPosition(leftHomePos + targetPos.getRotationUnits()));
+            elevatorRightMotor
+                    .setControl(rightPositionRequest.withSlot(1).withPosition(rightHomePos + targetPos.getRotationUnits()));
         }
+
+        //}
+    }
+
+    public double getPosError(){
+      double leftError = getActualPos() - this.targetPos.getRotationUnits();
+      return leftError;
     }
 
     public boolean isAtTargetPos(){
-        if(leftError.getValue() == 0.0 || rightError.getValue() == 0.0) return false;
-        return Math.abs(leftError.refresh().getValue()) <= 1.2 && Math.abs(rightError.refresh().getValue()) <= 1.2;
+        return Math.abs(getPosError()) <= 1.2;
     }
 
     public void setDrive(double drive){

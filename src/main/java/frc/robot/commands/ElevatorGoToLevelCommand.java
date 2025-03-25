@@ -25,6 +25,8 @@ public class ElevatorGoToLevelCommand extends Command {
     final PositionVoltage rightPositionRequest;
     final PositionVoltage leftPositionRequest;
 
+    final ElevatorPositions targetPos;
+
     public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, ElevatorPositions pos) {
         _elevatorSubsystem = elevatorSubsystem;
         addRequirements(_elevatorSubsystem);
@@ -40,6 +42,8 @@ public class ElevatorGoToLevelCommand extends Command {
 
         rightPositionRequest = new PositionVoltage(requestPosRots).withSlot(0);
         leftPositionRequest = new PositionVoltage(requestPosRots).withSlot(0);
+
+        targetPos = pos;
     }
 
     // public ElevatorGoToLevelCommand(ElevatorSubsystem elevatorSubsystem, double
@@ -63,12 +67,8 @@ public class ElevatorGoToLevelCommand extends Command {
         _elevatorSubsystem.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Coast);
         _elevatorSubsystem.elevatorRightMotor.setNeutralMode(NeutralModeValue.Coast);
 
-        if (_elevatorSubsystem.canGoToPosition(requestedPos)) {
-            _elevatorSubsystem.elevatorLeftMotor
-                    .setControl(leftPositionRequest.withPosition(_elevatorSubsystem.leftHomePos + requestPosRots));
-            _elevatorSubsystem.elevatorRightMotor
-                    .setControl(rightPositionRequest.withPosition(_elevatorSubsystem.rightHomePos + requestPosRots));
-        }
+        _elevatorSubsystem.goToPosition(targetPos);
+
     }
 
     @Override
@@ -78,30 +78,30 @@ public class ElevatorGoToLevelCommand extends Command {
     @Override
     public boolean isFinished() {
 
-        leftPosError.refresh();
-        rightPosError.refresh();
+        //leftPosError.refresh();
+        //rightPosError.refresh();
+        //
+        //if (requestPosRots >= 0) {
+        //    return _elevatorSubsystem.isAtBottom();
+        //} else if (leftPosition.hasUpdated() && rightPosition.hasUpdated()) {
+        //
+        //    SmartDashboard.putNumber("Ele Left Pos", leftPosition.getValueAsDouble());
+        //    SmartDashboard.putNumber("Ele Right", rightPosition.getValueAsDouble());
+        //
+        //    return (Math.abs(leftPosition.getValueAsDouble() - (requestPosRots + _elevatorSubsystem.leftHomePos)) <= 0.1
+        //            ||
+        //            Math.abs(rightPosition.getValueAsDouble()
+        //                    - (requestPosRots + _elevatorSubsystem.rightHomePos)) <= 0.1);
+        //}
 
-        if (requestPosRots >= 0) {
-            return _elevatorSubsystem.isAtBottom();
-        } else if (leftPosition.hasUpdated() && rightPosition.hasUpdated()) {
-
-            SmartDashboard.putNumber("Ele Left Pos", leftPosition.getValueAsDouble());
-            SmartDashboard.putNumber("Ele Right", rightPosition.getValueAsDouble());
-
-            return (Math.abs(leftPosition.getValueAsDouble() - (requestPosRots + _elevatorSubsystem.leftHomePos)) <= 0.1
-                    ||
-                    Math.abs(rightPosition.getValueAsDouble()
-                            - (requestPosRots + _elevatorSubsystem.rightHomePos)) <= 0.1);
-        }
-
-        return false;
+        //return false;
+        
+        return _elevatorSubsystem.isAtTargetPos();
 
     }
 
     @Override
     public void end(boolean interrupted) {
-        _elevatorSubsystem.elevatorLeftMotor.stopMotor();
-        _elevatorSubsystem.elevatorRightMotor.stopMotor();
         _elevatorSubsystem.elevatorLeftMotor.setNeutralMode(NeutralModeValue.Brake);
         _elevatorSubsystem.elevatorRightMotor.setNeutralMode(NeutralModeValue.Brake);
     }
