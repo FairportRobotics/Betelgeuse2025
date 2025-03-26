@@ -97,7 +97,7 @@ public class ArmSubsystem extends TestableSubsystem {
 
     Logger.recordOutput("Arm Requested Pos", requestedPos.refresh().getValueAsDouble()-armHomePos);
 
-    Logger.recordOutput("Arm Error", posError.refresh().getValueAsDouble());
+    Logger.recordOutput("Arm Error", getPosError());
 
   }
 
@@ -126,12 +126,13 @@ public class ArmSubsystem extends TestableSubsystem {
    *
    * @return motor.getClosedLoopError. It's as shrimple as that
    */
-  public StatusSignal<Double> getPosError() {
-    return posError;
+  public double getPosError() {
+    double error = (getActualPos().refresh().getValueAsDouble() - armHomePos) - targetPos.getValue();
+    return error;
   }
 
   public boolean isAtTargetPos(){
-    return Math.abs(posError.refresh().getValue()) <= 0.2;
+    return Math.abs(getPosError()) <= 0.5;
   }
 
   public void setBrakeMode(boolean brakeMode){

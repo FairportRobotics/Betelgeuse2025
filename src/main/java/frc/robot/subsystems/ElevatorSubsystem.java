@@ -159,11 +159,9 @@ public class ElevatorSubsystem extends TestableSubsystem {
 
         Logger.recordOutput("Elevator At Bottom", isAtBottom());
 
-        Logger.recordOutput("Elevator Left Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
-        Logger.recordOutput("Elevator Right Pos", rightPos.refresh().getValueAsDouble()-rightHomePos);
+        Logger.recordOutput("Elevator Pos", leftPos.refresh().getValueAsDouble()-leftHomePos);
 
-        Logger.recordOutput("Elevator Left Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
-        Logger.recordOutput("Elevator Right Requested Pos", rightRequestedPos.refresh().getValueAsDouble() - rightHomePos);
+        Logger.recordOutput("Elevator Requested Pos", leftRequestedPos.refresh().getValueAsDouble() - leftHomePos);
         Logger.recordOutput("Elevator Error", getPosError());
 
         Logger.recordOutput("Elevator Lowest valid pos", lowestValidElevatorPosition);

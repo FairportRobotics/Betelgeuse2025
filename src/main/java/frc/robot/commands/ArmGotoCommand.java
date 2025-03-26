@@ -35,7 +35,7 @@ public class ArmGotoCommand extends Command {
     
     _armSubsystem = subsystem;
     pos = newPos;
-    posError = _armSubsystem.getPosError();
+   // posError = _armSubsystem.getPosError();
     currentPos = _armSubsystem.getActualPos();
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -59,20 +59,6 @@ public class ArmGotoCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    posError.refresh();
-    currentPos.refresh();
-    boolean retVal = false;
-
-        if (pos == ArmPositions.STOWED) {
-            retVal = _armSubsystem.getSwitch();
-        } 
-        else if (currentPos.hasUpdated()) {
-
-            SmartDashboard.putNumber("Arm Pos", currentPos.getValueAsDouble());
-
-            retVal = (Math.abs(currentPos.getValueAsDouble() - (pos.getValue() )) <= 0.1);
-        }
-
-        return retVal;
+      return _armSubsystem.isAtTargetPos();
   }
 }

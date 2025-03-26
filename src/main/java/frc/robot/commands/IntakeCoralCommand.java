@@ -38,6 +38,8 @@ public class IntakeCoralCommand extends Command{
         this.handSubsystem = handSub;
         this.elevatorSubsystem = elevatorSub;
         this.hopperSubsystem = hopperSub;
+
+        this.addRequirements(armSubsystem, handSubsystem, elevatorSubsystem, hopperSubsystem);
     }
 
     @Override
@@ -83,7 +85,7 @@ public class IntakeCoralCommand extends Command{
                 handSubsystem.setSpeed(-0.3);
                 elevatorSubsystem.setDrive(0.02);
 
-                if(elevatorSubsystem.getActualPos() >= -6){ // Failed, abort
+                if(elevatorSubsystem.getActualPos() >= -6.5){ // Failed, abort
                   elevatorSubsystem.setDrive(0);
                   elevatorSubsystem.goToPosition(ElevatorPositions.FOUR);
                   handSubsystem.setSpeed(0);

@@ -82,8 +82,8 @@ public final class Constants {
     MIDDLE(23),
     DOWN(50),
     NONE(0),
-    SCORINGTOP(14),
-    SCORINGBOTTOM(20);
+    SCORINGTOP(9),
+    SCORINGBOTTOM(23);
 
     double mArmPosition;
 

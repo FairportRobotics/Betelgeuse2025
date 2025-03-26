@@ -4,27 +4,10 @@
 
 package frc.robot;
 
-import frc.robot.Constants.ElevatorPositions;
-import frc.robot.Constants.ControllerIds;
-import frc.robot.Constants.DriveWaypoints;
-import frc.robot.Constants.ArmPositions;
-import frc.robot.commands.ArmGotoCommand;
-import frc.robot.commands.ClimberIn;
-import frc.robot.commands.ClimberOut;
-import frc.robot.commands.ElevatorGoToLevelCommand;
-import frc.robot.commands.ElevatorUpCommand;
-import frc.robot.commands.HandCommand;
-import frc.robot.commands.IntakeCoralCommand;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.ClimbingSubsystem;
-import frc.robot.subsystems.HandSubsystem;
-import frc.robot.subsystems.HopperSubsystem;
-
-import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
@@ -36,15 +19,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
+import frc.robot.Constants.ArmPositions;
+import frc.robot.Constants.ControllerIds;
+import frc.robot.Constants.DriveWaypoints;
+import frc.robot.Constants.ElevatorPositions;
+import frc.robot.commands.ArmGotoCommand;
+import frc.robot.commands.ElevatorGoToLevelCommand;
+import frc.robot.commands.HandCommand;
+import frc.robot.commands.IntakeCoralCommand;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimbingSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.HandSubsystem;
+import frc.robot.subsystems.HopperSubsystem;
 
 public class RobotContainer {
 
@@ -79,6 +71,13 @@ public class RobotContainer {
 
     private final CommandXboxController driver = new CommandXboxController(ControllerIds.DRIVER_CONTROLLER_PORT);
     private final CommandXboxController operator = new CommandXboxController(ControllerIds.OPERATOR_CONTROLLER_PORT);
+
+    private final Command scoreCommand = Commands.sequence(
+            new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP),
+            new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGBOTTOM),
+            new WaitCommand(5.0),
+            new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP)
+            );
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -185,7 +184,14 @@ public class RobotContainer {
         // driver.start().and(driver.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        //driver.leftTrigger().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        driver.rightBumper().onTrue(scoreCommand);
+        driver.leftBumper().onTrue(new IntakeCoralCommand(m_armSubsystem, m_HandSubsystem, m_elevatorSubsystem, m_HopperSubsystem));
+
+       driver.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.FOUR));
+       driver.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
+       driver.povRight().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
+       driver.povDown().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.ONE));
 
        operator.povUp().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.THREE));
        operator.povLeft().onTrue(new ElevatorGoToLevelCommand(m_elevatorSubsystem, ElevatorPositions.TWO));
@@ -202,7 +208,6 @@ public class RobotContainer {
         operator.a().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.MIDDLE))));
         operator.b().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.SCORINGTOP))));
         operator.x().onTrue((Commands.deadline(new WaitCommand(1), new ArmGotoCommand(m_armSubsystem, ArmPositions.HOME))));
-        driver.a().onTrue(new IntakeCoralCommand(m_armSubsystem, m_HandSubsystem, m_elevatorSubsystem, m_HopperSubsystem));
         //driver.a().onTrue((Commands.deadline(new WaitCommand(1), new ClimberOut(m_ClimbingSubsystem))));
         //driver.b().onTrue((Commands.deadline(new WaitCommand(1), new ClimberIn(m_ClimbingSubsystem))));
         //driver.b().onTrue(drivetrain.driveToWaypoint(DriveWaypoints.REEF_L));
